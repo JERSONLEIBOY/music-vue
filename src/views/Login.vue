@@ -8,20 +8,49 @@
       <div class="input-content">
         <div class="input-item">
           <div class="tit">手机号码</div>
-          <input type="number" placeholder="请输入手机号码">
+          <input
+            type="phone"
+            v-model="loginForm.phone"
+            placeholder="请输入网易云帐号登录"
+          >
         </div>
         <div class="input-item">
           <div class="tit">密码</div>
-          <input type="number" placeholder="8-18位不含特殊字符的数字、字母组合">
+          <input
+            type="password"
+            v-model="loginForm.pwd"
+            placeholder="请输入密码"
+          >
         </div>
       </div>
-      <div class="confirm-btn">登录</div>
+      <div
+        class="confirm-btn"
+        @click="submitForm"
+      >登录</div>
     </div>
   </div>
 </template>
 
 <script setup>
-
+import { reactive, getCurrentInstance } from 'vue';
+import { Toast } from 'vant';
+const { proxy } = getCurrentInstance();
+const loginForm = reactive({
+  phone: '',
+  pwd: ''
+})
+const submitForm = async () => {
+  if (loginForm.phone == '') {
+    Toast('请输入网易云帐号登录');
+    return;
+  }
+  if (loginForm.pwd == '') {
+    Toast('请输入密码');
+    return;
+  }
+  const { data: res } = await proxy.$http.login(loginForm);
+  console.log(res)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -46,24 +75,25 @@
     top: 40px;
     right: -15px;
     z-index: 95;
-    &:before, &:after {
+    &:before,
+    &:after {
       display: block;
       content: "";
       width: 200px;
       height: 40px;
       background: #b4f3e2;
     }
-    &:before{
-			transform: rotate(50deg);
-			border-radius: 0 50px 0 0;
-		}
-    &:after{
-			position: absolute;
-			right: -100px;
-			top: 0;
-			transform: rotate(-50deg);
-			border-radius: 50px 0 0 0;
-		}
+    &:before {
+      transform: rotate(50deg);
+      border-radius: 0 50px 0 0;
+    }
+    &:after {
+      position: absolute;
+      right: -100px;
+      top: 0;
+      transform: rotate(-50deg);
+      border-radius: 50px 0 0 0;
+    }
   }
   .wrapper {
     position: relative;
@@ -74,7 +104,7 @@
       font-size: 60px;
       color: #f8f8f8;
       position: relative;
-      left: -8px
+      left: -8px;
     }
     .welcome {
       position: relative;

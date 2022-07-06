@@ -1,10 +1,11 @@
 import Axios from 'axios';
-const baseURL = '';
-if (import.meta.env.NODE_ENV === 'development') {
+let baseURL = '';
+if (import.meta.env.MODE  === 'development') {
   baseURL = 'http://localhost:3000/'
-} else if (import.meta.env.NODE_ENV === 'production') {
+} else if (import.meta.env.MODE === 'production') {
   baseURL = 'http://localhost:3000/'
 }
+console.log(baseURL)
 /*  防止请求重复
 1. 我们需要对所有正在进行中的请求进行缓存。在请求发起前判断缓存列表中该请求是否正在进行，如果有则取消本次请求。
 2.在任意请求完成后，需要在缓存列表中删除该次请求，以便可以重新发送该请求
@@ -61,7 +62,7 @@ instance.interceptors.request.use((config) => {
   // 这里根据你项目实际情况来对config做处理
   // 设置cancelToken
   let cancelFn = null;
-  config.cancelToken = new axios.CancelToken((c) => {
+  config.cancelToken = new Axios.CancelToken((c) => {
     cancelFn = c;
   })
   // 阻止重复请求

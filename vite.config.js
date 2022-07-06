@@ -11,6 +11,7 @@ function pathResolve(dir) {
 }
 export default defineConfig(({command, mode}) => {
   const env = loadEnv(mode, process.cwd(), '')
+  console.log(env.VITE_BASE_URL)
   return {
     plugins: [
       vue(),
@@ -26,7 +27,16 @@ export default defineConfig(({command, mode}) => {
     server: {
       open: true,//启动时自动打开浏览器
       hmr: true,//开启热更新
-      port: '8080'
+      port: '8080',
+      cors: true,
+      proxy: {
+        "/api": {
+          target: 'http://localhost:3000/ ',
+          ws: true,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
     },
     envPrefix: ['VITE'],
     base: '/',
