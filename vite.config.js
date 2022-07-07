@@ -31,7 +31,7 @@ export default defineConfig(({command, mode}) => {
       cors: true,
       proxy: {
         "/api": {
-          target: 'http://localhost:3000/ ',
+          target: env.VITE_BASE_URL,
           ws: true,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '')

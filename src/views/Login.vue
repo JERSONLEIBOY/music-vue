@@ -39,6 +39,7 @@
 import { reactive, getCurrentInstance } from 'vue';
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
+console.log(proxy)
 const state = reactive({
   phone: '',
   captcha: '',
