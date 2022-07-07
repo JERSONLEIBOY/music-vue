@@ -10,17 +10,21 @@
           <div class="tit">手机号码</div>
           <input
             type="phone"
-            v-model="loginForm.phone"
-            placeholder="请输入网易云帐号登录"
+            v-model="state.phone"
+            placeholder="请输入手机号码"
           >
         </div>
         <div class="input-item">
-          <div class="tit">密码</div>
-          <input
-            type="password"
-            v-model="loginForm.pwd"
-            placeholder="请输入密码"
-          >
+          <div class="tit">验证码</div>
+          <div class="input-yzm">
+            <input
+              type="number"
+              v-model="state.captcha"
+              placeholder="请输入验证码"
+            >
+            <div class="yzm" @click="getCode()" v-show="state.sendAuthCode">发送验证码</div>
+            <div class="yzm" v-show="!state.sendAuthCode">{{state.second}}s</div>
+          </div>
         </div>
       </div>
       <div
@@ -35,22 +39,113 @@
 import { reactive, getCurrentInstance } from 'vue';
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
-const loginForm = reactive({
+const state = reactive({
   phone: '',
-  pwd: ''
+  captcha: '',
+  sendAuthCode: true,/* 布尔值，通过v-show控制显示‘获取按钮’还是‘倒计时’ */
+  second: 60, /* 一分钟 倒计时*/
+  timer: null  /* 倒计时 计数器,防止点击的时候触发多个setInterval*/
 })
+const isSubmit = () => {
+  if (state.phone == '') {
+    Toast('请输入手机号码');
+    return true
+  } else if (state.captcha == '') {
+    Toast('请输入验证码');
+    return true;
+  } else {
+    return false;
+  }
+}
 const submitForm = async () => {
-  if (loginForm.phone == '') {
-    Toast('请输入网易云帐号登录');
-    return;
-  }
-  if (loginForm.pwd == '') {
-    Toast('请输入密码');
-    return;
-  }
-  const { data: res } = await proxy.$http.login(loginForm);
+  if (isSubmit()) return;
+  const { data: res } = await proxy.$http.login(state.phone, state.captcha);
   console.log(res)
 }
+/*-----------------------------------验证码----------------------------*/
+/**
+ * 发送验证码 === `点击按钮操作,点击按钮操作,点击按钮操作`
+ * */
+const getCode = async () => {
+  if (state.sendAuthCode) {
+    const { data: res } = await proxy.$http.yzm(state.phone);
+    console.log(res)
+    if (res.code != 200) {
+      Toast(res.message);
+      return
+    } else {
+      Toast('验证码已发送');
+      state.sendAuthCode = false;
+      let interval = window.setInterval(function () {
+        setStorage(state.second);
+        if (state.second-- <= 0) {
+          /* 如果 倒计时完毕 重新赋值*/
+          state.second = 60;
+          state.sendAuthCode = true;
+          window.clearInterval(interval);
+        }
+      }, 1000);
+    }
+  }
+}
+/**
+ * 存储 验证码 防止刷新
+ * `用处`: 防止页面刷新 发送验证码状态改变
+ * */
+const setStorage = (parm) => {
+  localStorage.setItem("dalay", parm);
+  localStorage.setItem("_time", new Date().getTime());
+};
+const removeStorage = () => {
+  localStorage.removeItem("dalay");
+  localStorage.removeItem("_time");
+}
+/**
+ * 获取 缓存 数据
+ * `用处`: 防止页面刷新 发送验证码状态改变
+ * */
+const getStorage = () => {
+  let localDelay = {};
+  localDelay.delay = localStorage.getItem("dalay");
+  localDelay.sec = localStorage.getItem("_time");
+  return localDelay;
+}
+/**
+ *  判断
+ *  */
+const judgeCode = () => {
+  // 获取缓存中的数据
+  let localDelay = getStorage();
+  let secTime = parseInt(
+    (new Date().getTime() - localDelay.sec) / 1000
+  );
+  if (secTime > localDelay.delay) {
+    state.sendAuthCode = true;
+    removeStorage();
+  } else {
+    state.sendAuthCode = false;
+    let _delay = localDelay.delay - secTime;
+    state.second = _delay;
+    state.timer = setInterval(() => {
+      if (_delay > 1) {
+        _delay--;
+        setStorage(_delay);
+        state.second = _delay;
+        state.sendAuthCode = false;
+      } else {
+        // 让浏览器打开的时候,显示剩余的时间
+        state.sendAuthCode = true;
+        window.clearInterval(state.timer);
+      }
+    }, 1000);
+  }
+}
+
+/**
+ * 页面执行
+ */
+judgeCode()
+/*-----------------------------------验证码----------------------------*/
 </script>
 
 <style lang="scss" scoped>
@@ -139,6 +234,23 @@ const submitForm = async () => {
           width: 100%;
           border: none;
           background: none;
+        }
+        .input-yzm {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          .yzm {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 25px;
+            padding: 0 5px;
+            color: #606266;
+            font-size: 13px;
+            white-space: nowrap;
+          }
         }
       }
     }

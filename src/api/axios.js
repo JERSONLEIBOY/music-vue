@@ -1,9 +1,9 @@
 import Axios from 'axios';
 let baseURL = '';
 if (import.meta.env.MODE  === 'development') {
-  baseURL = 'http://localhost:3000/'
+  baseURL = '/api'
 } else if (import.meta.env.MODE === 'production') {
-  baseURL = 'http://localhost:3000/'
+  baseURL = '/api'
 }
 console.log(baseURL)
 /*  防止请求重复
