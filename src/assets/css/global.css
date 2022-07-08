@@ -2,6 +2,17 @@
   padding: 0;
   margin: 0;
 }
+body,html {
+  line-height: 1;
+  font-family: 'PingFang SC', 'STHeitiSC-Light', 'Helvetica-Light', arial, sans-serif, 'Droid Sans Fallback';
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  background: #222;
+  color: #fff;
+}
 input {
   border: none;
   background: none;
