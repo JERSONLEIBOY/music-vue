@@ -4,51 +4,53 @@
     ref="recommend"
   >
     <scroll class="recommend-content" :pulldown="pulldown">
-      <van-swipe
-        class="my-swipe"
-        :autoplay="3000"
-        :height="150"
-        indicator-color="white"
-      >
-        <van-swipe-item
-          v-for="(item, index) in state.recommends"
-          :key="index"
+      <div>
+        <van-swipe
+          class="my-swipe"
+          :autoplay="3000"
+          :height="150"
+          indicator-color="white"
         >
-          <img
-            class="swiperImg"
-            :src="item.pic"
-            alt=""
-          >
-        </van-swipe-item>
-      </van-swipe>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-          <li
-            class="item"
-            v-for="(item, index) in state.disclist"
+          <van-swipe-item
+            v-for="(item, index) in state.recommends"
             :key="index"
           >
-            <div class="icon">
-              <img
-                width="60"
-                height="60"
-                :src="item.coverImgUrl"
-                alt=""
-              >
-            </div>
-            <div class="text">
-              <h2 class="name">{{item.name}}</h2>
-              <p class="desc">
-                <span
-                  class="tag"
-                  v-for="(childItem, childIndex) in item.tags"
-                  :key="childIndex"
-                >#{{childItem}}</span>
-              </p>
-            </div>
-          </li>
-        </ul>
+            <img
+              class="swiperImg"
+              :src="item.pic"
+              alt=""
+            >
+          </van-swipe-item>
+        </van-swipe>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li
+              class="item"
+              v-for="(item, index) in state.disclist"
+              :key="index"
+            >
+              <div class="icon">
+                <img
+                  width="60"
+                  height="60"
+                  :src="item.coverImgUrl"
+                  alt=""
+                >
+              </div>
+              <div class="text">
+                <h2 class="name">{{item.name}}</h2>
+                <p class="desc">
+                  <span
+                    class="tag"
+                    v-for="(childItem, childIndex) in item.tags"
+                    :key="childIndex"
+                  >#{{childItem}}</span>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </scroll>
   </div>

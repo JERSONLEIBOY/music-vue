@@ -1,8 +1,6 @@
 <template>
   <div :class="{ wrapper: true, x: props.scrollX }" ref="wrapper">
-    <div class="content">
-      <slot></slot>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
