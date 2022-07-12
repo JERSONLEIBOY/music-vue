@@ -1,5 +1,12 @@
 import api from "./axios";
-
+// 获取歌单
+const getMusicList = () => {
+  return api.get(`/top/playlist?limit=10&order=hot&cat=&offset=0`, {})
+}
+// 轮播图
+const banner = () => {
+  return api.get(`/banner?type=2`, {})
+}
 // 登录接口
 const login = (phone = '', captcha = '') => {
   return api.post(`/login/cellphone`, {
@@ -19,5 +26,7 @@ const logout = () => {
 export {
   login,
   logout,
-  yzm
+  yzm,
+  banner,
+  getMusicList
 }
