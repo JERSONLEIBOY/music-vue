@@ -18,7 +18,7 @@ BScroll.use(ObserveDOM)
 BScroll.use(ObserveImage)
 BScroll.use(Pullup)
 BScroll.use(Pulldown)
-const emit = defineEmits(['ckick', 'beforeScroll', 'afterScroll', 'scroll'])
+const emit = defineEmits(['ckick', 'beforeScroll', 'afterScroll', 'scroll', 'refresh'])
 const props = defineProps({
   /**
    * 1 滚动的时候会派发scroll事件，会截流。
@@ -82,6 +82,10 @@ const props = defineProps({
   afterScroll: {
     type: Boolean,
     default: false
+  },
+  refreshScroll: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -93,7 +97,7 @@ onMounted(() => {
     observeDOM: true,
     observeImage: true,
     mouseWheel: true,
-    pullDownRefresh: true,
+    pullDownRefresh: props.pulldown,
     pullUpLoad: true
   })
   /**
@@ -122,7 +126,9 @@ onMounted(() => {
       emit('afterScroll')
     })
   }
-
+  if (props.refreshScroll) {
+    bscroll.refresh();
+  }
   if (props.pullup !== null) {
     bscroll.on('pullingUp', () => {
       try {

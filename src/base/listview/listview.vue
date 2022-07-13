@@ -1,20 +1,27 @@
 <template>
-  <scroll class="listview" :probeType="3">
+  <scroll
+    class="listview"
+    :probeType="3"
+    :refreshScroll="true"
+  >
     <ul>
       <li
-        v-for="(item, index) in dataList"
-        :key="index"
         class="list-group"
         ref="listgroup"
       >
-        <h2 class="list-group-title">1111</h2>
         <ul>
-          <li class="list-group-item">
-            <img
-              class="avatar"
+          <li
+            class="list-group-item"
+            v-for="(item, index) in dataList"
+            :key="index"
+          >
+            <van-image
+              width="50"
+              height="50"
+              lazy-load
+              :round="true"
               :src="item.picUrl"
-              alt=""
-            >
+            />
             <span class="name">{{item.name}}</span>
           </li>
         </ul>
@@ -22,21 +29,26 @@
     </ul>
     <div class="list-shortcut">
       <ul>
-        <li class="item" v-for="(item, index) in shortcut" :key="index"></li>
+        <li
+          class="item"
+          v-for="(item, index) in shortcut"
+          :key="index"
+          :class="{'current': state.currentIndex === index}"
+        >{{item.title}}</li>
       </ul>
     </div>
     <div
       class="list-fixed"
       ref="fixed"
     >
-      <div class="fixed-title">1</div>
+      <div class="fixed-title">热门歌手</div>
     </div>
   </scroll>
 </template>
 
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 const TITLE_HEIGHT = 30;
 const ANCHOR_HEIGHT = 18;
 const state = reactive({
@@ -64,7 +76,7 @@ const props = defineProps({
   overflow: hidden;
   background: #222;
   .list-group {
-    padding-bottom: 30px;
+    padding: 30px 0;
     .list-group-title {
       height: 30px;
       line-height: 30px;

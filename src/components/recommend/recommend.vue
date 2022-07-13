@@ -3,7 +3,11 @@
     class="recommend"
     ref="recommend"
   >
-    <scroll class="recommend-content" :pulldown="pulldown">
+    <scroll
+      class="recommend-content"
+      :pulldown="pulldown"
+      :refreshScroll="true"
+    >
       <div>
         <van-swipe
           class="my-swipe"
@@ -15,11 +19,12 @@
             v-for="(item, index) in state.recommends"
             :key="index"
           >
-            <img
-              class="swiperImg"
+            <van-image
+              width="100%"
+              height="100%"
               :src="item.pic"
-              alt=""
-            >
+            />
+
           </van-swipe-item>
         </van-swipe>
         <div class="recommend-list">
@@ -76,7 +81,7 @@ const getMusicList = async () => {
     state.disclist = res.playlists;
   }
 }
-const pulldown = () => {}
+const pulldown = () => { }
 onMounted(() => {
   _getRecommend()
   getMusicList()

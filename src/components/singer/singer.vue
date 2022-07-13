@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view :dataList="state.singerList"></list-view>
+    <list-view :dataList="state.singerList" :shortcut="state.shortcut"></list-view>
   </div>
 </template>
 
@@ -15,7 +15,64 @@ const state = reactive({
   params: {
     limit: 10,
     offset: 0
-  }
+  },
+  shortcut: [{
+    title: '热'
+  }, {
+    title: 'A'
+  }, {
+    title: 'B'
+  }, {
+    title: 'C'
+  }, {
+    title: 'D'
+  }, {
+    title: 'E'
+  }, {
+    title: 'F'
+  }, {
+    title: 'G'
+  }, {
+    title: 'H'
+  }, {
+    title: 'I'
+  }, {
+    title: 'J'
+  }, {
+    title: 'K'
+  }, {
+    title: 'L'
+  }, {
+    title: 'M'
+  }, {
+    title: 'N'
+  }, {
+    title: 'O'
+  }, {
+    title: 'P'
+  }, {
+    title: 'Q'
+  }, {
+    title: 'R'
+  }, {
+    title: 'S'
+  }, {
+    title: 'T'
+  }, {
+    title: 'U'
+  }, {
+    title: 'V'
+  }, {
+    title: 'W'
+  }, {
+    title: 'X'
+  }, {
+    title: 'Y'
+  }, {
+    title: 'Z'
+  }, {
+    title: '#'
+  }]
 })
 const topArtists = async (params) => {
   const { data: res } = await proxy.$http.topArtists(params);
