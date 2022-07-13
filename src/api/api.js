@@ -1,6 +1,7 @@
 import api from "./axios";
 // 获取热门歌手
-const topArtists = ({ limit = 30, offset = 0 }) => { return api.get(`/top/artists?limit=${limit}&offset=${offset}`, {}) }
+const topArtists = ({ limit = 30, offset = 0 }) => { return api.get(`/artists?limit=${limit}&offset=${offset}`, {}) }
+const artistList = ({ type = -1, area = -1, initial = '', limit = 50, offset = 0 }) => { return api.get(`/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}&offset=${offset}`, {}) }
 // 获取歌单
 const getMusicList = () => {
   return api.get(`/top/playlist?limit=10&order=hot&cat=&offset=0`, {})
@@ -31,5 +32,6 @@ export {
   yzm,
   banner,
   getMusicList,
-  topArtists
+  topArtists,
+  artistList
 }

@@ -2,7 +2,11 @@
   <scroll
     class="listview"
     :probeType="3"
-    :refreshScroll="true"
+    :data="dataList"
+    :listenScroll="true"
+    :pullup="true"
+    @scroll="handleScroll"
+    @pullingUp="pullingUp"
   >
     <ul>
       <li
@@ -20,7 +24,7 @@
               height="50"
               lazy-load
               :round="true"
-              :src="item.picUrl"
+              :src="item.picUrl + '?param=120y120'"
             />
             <span class="name">{{item.name}}</span>
           </li>
@@ -66,6 +70,12 @@ const props = defineProps({
     default: []
   }
 })
+const handleScroll = (position) => {
+  console.log(position)
+}
+const pullingUp = () => {
+  console.log(position)
+}
 </script>
 
 <style lang="scss" scoped>

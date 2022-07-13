@@ -1,18 +1,26 @@
 <template>
-  <div class="singer" ref="singer">
-    <list-view :dataList="state.singerList" :shortcut="state.shortcut"></list-view>
+  <div
+    class="singer"
+    ref="singer"
+  >
+    <list-view
+      :dataList="state.singerList"
+      :shortcut="state.shortcut"
+    ></list-view>
   </div>
 </template>
 
 <script setup>
 import { reactive, getCurrentInstance, onMounted } from 'vue';
 import ListView from "@/base/listview/listview.vue";
-const HOT_SINGER_LEN = 100;
-const HOT_NAME = "热门";
+import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
 const state = reactive({
   singerList: [],
   params: {
+    type: -1,
+    area: -1,
+    initial: '',
     limit: 10,
     offset: 0
   },
@@ -75,7 +83,10 @@ const state = reactive({
   }]
 })
 const topArtists = async (params) => {
-  const { data: res } = await proxy.$http.topArtists(params);
+  const { data: res } = await proxy.$http.artistList(params);
+  if (res.code !== 200) {
+    return Toast.fail('数据请求失败')
+  }
   if (res.code == 200) {
     state.singerList = res.artists;
   }

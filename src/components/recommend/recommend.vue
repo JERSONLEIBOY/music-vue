@@ -5,8 +5,6 @@
   >
     <scroll
       class="recommend-content"
-      :pulldown="pulldown"
-      :refreshScroll="true"
     >
       <div>
         <van-swipe

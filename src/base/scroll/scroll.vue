@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import BScroll from '@better-scroll/core'
 import ObserveDOM from '@better-scroll/observe-dom'
@@ -59,15 +59,15 @@ const props = defineProps({
    * 是否派发滚动到底部的事件，用于上拉加载
    */
   pullup: {
-    type: Function,
-    default: null
+    type: Boolean,
+    default: false
   },
   /**
    * 是否派发顶部下拉的事件，用于下拉刷新
    */
   pulldown: {
-    type: Function,
-    default: null
+    type: Boolean,
+    default: false
   },
   /**
    * 是否派发列表滚动开始的事件
@@ -86,9 +86,15 @@ const props = defineProps({
   refreshScroll: {
     type: Boolean,
     default: false
+  },
+  data: {
+    type: Array,
+    default: null
   }
 })
-
+watch(props.data, () => {
+  bscroll.refresh();
+})
 onMounted(() => {
   bscroll = new BScroll(wrapper.value, {
     scrollX: props.scrollX,
@@ -129,7 +135,7 @@ onMounted(() => {
   if (props.refreshScroll) {
     bscroll.refresh();
   }
-  if (props.pullup !== null) {
+  if (props.pullup) {
     bscroll.on('pullingUp', () => {
       try {
         props.pullup().then(() => {
@@ -142,7 +148,7 @@ onMounted(() => {
     })
   }
 
-  if (props.pulldown !== null) {
+  if (props.pulldown) {
     bscroll.on('pullingDown', () => {
       try {
         props.pulldown().then(() => {
