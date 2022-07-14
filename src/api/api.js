@@ -1,4 +1,7 @@
 import api from "./axios";
+// 排行榜
+const toplist = () => { return api.get('/toplist', {}) }
+const topListDetail = () => { return api.get('/toplist/detail', {}) }
 // 获取热门歌手
 const topArtists = ({ limit = 30, offset = 0 }) => { return api.get(`/artists?limit=${limit}&offset=${offset}`, {}) }
 const artistList = ({ type = -1, area = -1, initial = '', limit = 50, offset = 0 }) => { return api.get(`/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}&offset=${offset}`, {}) }
@@ -33,5 +36,7 @@ export {
   banner,
   getMusicList,
   topArtists,
-  artistList
+  artistList,
+  toplist,
+  topListDetail
 }
