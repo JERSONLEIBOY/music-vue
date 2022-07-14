@@ -4,9 +4,7 @@
     :probeType="3"
     :data="dataList"
     :listenScroll="true"
-    :pullup="true"
-    @scroll="handleScroll"
-    @pullingUp="pullingUp"
+    :pullup="pullingUp"
   >
     <ul>
       <li
@@ -47,14 +45,17 @@
     >
       <div class="fixed-title">热门歌手</div>
     </div>
+    <div class="loading-container" v-if="isLoading">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
+import Loading from "@/base/loading/loading.vue"
 import { reactive, onMounted, computed } from 'vue';
-const TITLE_HEIGHT = 30;
-const ANCHOR_HEIGHT = 18;
+const emit = defineEmits(['pullingUp'])
 const state = reactive({
   currentIndex: 0,
   scrollY: -1,
@@ -68,13 +69,14 @@ const props = defineProps({
   shortcut: {
     type: Array,
     default: []
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   }
 })
-const handleScroll = (position) => {
-  console.log(position)
-}
 const pullingUp = () => {
-  console.log(position)
+  emit("pullingUp")
 }
 </script>
 
@@ -147,6 +149,12 @@ const pullingUp = () => {
       color: rgba(255, 255, 255, 0.5);
       background: #333;
     }
+  }
+  .loading-container {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 </style>

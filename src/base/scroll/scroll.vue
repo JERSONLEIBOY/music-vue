@@ -59,15 +59,15 @@ const props = defineProps({
    * 是否派发滚动到底部的事件，用于上拉加载
    */
   pullup: {
-    type: Boolean,
-    default: false
+    type: Function,
+    default: null
   },
   /**
    * 是否派发顶部下拉的事件，用于下拉刷新
    */
   pulldown: {
-    type: Boolean,
-    default: false
+    type: Function,
+    default: null
   },
   /**
    * 是否派发列表滚动开始的事件
@@ -89,7 +89,7 @@ const props = defineProps({
   },
   data: {
     type: Array,
-    default: null
+    default: []
   }
 })
 watch(props.data, () => {
@@ -135,7 +135,7 @@ onMounted(() => {
   if (props.refreshScroll) {
     bscroll.refresh();
   }
-  if (props.pullup) {
+  if (props.pullup !== null) {
     bscroll.on('pullingUp', () => {
       try {
         props.pullup().then(() => {
@@ -148,7 +148,7 @@ onMounted(() => {
     })
   }
 
-  if (props.pulldown) {
+  if (props.pulldown !== null) {
     bscroll.on('pullingDown', () => {
       try {
         props.pulldown().then(() => {

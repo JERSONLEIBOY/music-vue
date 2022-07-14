@@ -6,6 +6,8 @@
     <list-view
       :dataList="state.singerList"
       :shortcut="state.shortcut"
+      :isLoading="state.isLoading"
+      @pullingUp="handlePullingUp"
     ></list-view>
   </div>
 </template>
@@ -80,16 +82,25 @@ const state = reactive({
     title: 'Z'
   }, {
     title: '#'
-  }]
+  }],
+  isLoading: false,
+  more: false
 })
 const topArtists = async (params) => {
+  state.isLoading = true;
   const { data: res } = await proxy.$http.artistList(params);
   if (res.code !== 200) {
+    state.isLoading = false;
     return Toast.fail('数据请求失败')
   }
-  if (res.code == 200) {
-    state.singerList = res.artists;
-  }
+  state.isLoading = false;
+  state.singerList = state.params.offset !== 0 ? [...state.singerList, ...res.artists] : res.artists;
+  state.more = res.more;
+}
+const handlePullingUp = () => {
+  if (!state.more) return;
+  state.params.offset = state.singerList.length;
+  topArtists(state.params)
 }
 onMounted(() => {
   topArtists(state.params)
