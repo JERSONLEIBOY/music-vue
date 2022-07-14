@@ -27,8 +27,8 @@
             <span class="name">{{item.name}}</span>
           </li>
         </ul>
+        <loading :vertical="true" :dataStatus="dataStatus"></loading>
       </li>
-      <loading :vertical="true" :dataStatus="dataStatus"></loading>
     </ul>
     <div class="list-shortcut">
       <ul>
