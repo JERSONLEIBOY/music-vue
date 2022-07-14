@@ -7,7 +7,9 @@
       :dataList="state.singerList"
       :shortcut="state.shortcut"
       :isLoading="state.isLoading"
+      :currentIndex="state.currentIndex"
       @pullingUp="handlePullingUp"
+      @onShortcutTouchStart="selectType"
     ></list-view>
   </div>
 </template>
@@ -26,6 +28,7 @@ const state = reactive({
     limit: 10,
     offset: 0
   },
+  currentIndex: 0,
   shortcut: [{
     title: '热'
   }, {
@@ -100,10 +103,29 @@ const topArtists = async (params) => {
 const handlePullingUp = () => {
   if (!state.more) return;
   state.params.offset = state.singerList.length;
-  topArtists(state.params)
+  topArtists(state.params).catch((error) => {
+    console.log(error)
+  })
+}
+const selectType = (item, index) => {
+  state.currentIndex = index;
+  state.singerList = [];
+  state.params.offset = 0;
+  if (item.title == '热') {
+    state.params.initial = -1;
+  } else if (item.title == '#') {
+    state.params.initial = 0;
+  } else {
+    state.params.initial = item.title;
+  }
+  topArtists(state.params).catch((error) => {
+    console.log(error)
+  })
 }
 onMounted(() => {
-  topArtists(state.params)
+  topArtists(state.params).catch((error) => {
+    console.log(error)
+  })
 })
 </script>
 

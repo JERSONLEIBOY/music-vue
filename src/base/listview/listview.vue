@@ -35,7 +35,8 @@
           class="item"
           v-for="(item, index) in shortcut"
           :key="index"
-          :class="{'current': state.currentIndex === index}"
+          :class="{'current': props.currentIndex === index}"
+          @click.stop="onShortcutTouchStart(item, index)"
         >{{item.title}}</li>
       </ul>
     </div>
@@ -54,13 +55,7 @@
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
-import { reactive, onMounted, computed } from 'vue';
-const emit = defineEmits(['pullingUp'])
-const state = reactive({
-  currentIndex: 0,
-  scrollY: -1,
-  diff: -1
-})
+const emit = defineEmits(['pullingUp', 'onShortcutTouchStart'])
 const props = defineProps({
   dataList: {
     type: Array,
@@ -73,10 +68,17 @@ const props = defineProps({
   isLoading: {
     type: Boolean,
     default: false,
+  },
+  currentIndex: {
+    type: Number,
+    default: 0
   }
 })
 const pullingUp = () => {
   emit("pullingUp")
+}
+const onShortcutTouchStart = (item, index) => {
+  emit('onShortcutTouchStart', item, index)
 }
 </script>
 
