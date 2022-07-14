@@ -1,7 +1,7 @@
 <template>
   <scroll
     class="listview"
-    :probeType="3"
+    :probeType="1"
     :data="dataList"
     :listenScroll="true"
     :pullup="pullingUp"
@@ -28,6 +28,7 @@
           </li>
         </ul>
       </li>
+      <loading :vertical="true" :dataStatus="dataStatus"></loading>
     </ul>
     <div class="list-shortcut">
       <ul>
@@ -45,9 +46,6 @@
       ref="fixed"
     >
       <div class="fixed-title">热门歌手</div>
-    </div>
-    <div class="loading-container" v-if="isLoading">
-      <loading></loading>
     </div>
   </scroll>
 </template>
@@ -72,6 +70,10 @@ const props = defineProps({
   currentIndex: {
     type: Number,
     default: 0
+  },
+  dataStatus: {
+    type: String,
+    default: 'HAS_MORE_DATA'
   }
 })
 const pullingUp = () => {
@@ -151,12 +153,6 @@ const onShortcutTouchStart = (item, index) => {
       color: rgba(255, 255, 255, 0.5);
       background: #333;
     }
-  }
-  .loading-container {
-    position: absolute;
-    width: 100%;
-    top: 50%;
-    transform: translateY(-50%);
   }
 }
 </style>

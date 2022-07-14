@@ -104,7 +104,7 @@ onMounted(() => {
     observeImage: true,
     mouseWheel: true,
     pullDownRefresh: props.pulldown,
-    pullUpLoad: true
+    pullUpLoad: props.pullup
   })
   /**
    * 如果开启了滚动前事件派发
