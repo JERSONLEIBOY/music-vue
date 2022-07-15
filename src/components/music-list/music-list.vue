@@ -1,12 +1,15 @@
 <template>
   <div class="music-list">
-    <div class="back" @click="back">
+    <div
+      class="back"
+      @click="back"
+    >
       <van-icon
         class="icon-back"
         name="arrow-left"
       />
     </div>
-    <h1 class="title">{{props.title}}</h1>
+    <h1 class="title">{{ props.title }}</h1>
     <div
       class="bg-image"
       :style="state.bgStyle"
@@ -19,7 +22,10 @@
           ref="playBtn"
           @click="random"
         >
-          <i class="icon-play"></i>
+          <van-icon
+            class="icon-play"
+            name="play-circle-o"
+          />
           <span class="text">随机播放全部</span>
         </div>
       </div>
@@ -32,13 +38,40 @@
       class="bg-layer"
       ref="layer"
     ></div>
+    <scroll
+      :data="props.songs"
+      @scroll="handleScroll"
+      :listenScroll="true"
+      :probeType="3"
+      class="list"
+      ref="list"
+    >
+      <div class="song-list-wrapper">
+        <song-list
+          :rank="props.rank"
+          @select="selectItem"
+          :songs="props.songs"
+        ></song-list>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script setup>
-import { reactive, getCurrentInstance, onMounted, computed } from 'vue';
+import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
+import { prefixStyle } from "@/utils/dom.js"
+import Scroll from '@/base/scroll/scroll.vue'
+import SongList from "@/base/song-list/song-list.vue"
 import { useRouter } from 'vue-router';
+const transform = prefixStyle("transform");
+const backdrop = prefixStyle("backdrop-filter");
+const RESERVED_HEIGHT = 40;
 const router = useRouter();
+const list = ref(null);
+const bgImage = ref(null);
+const layer = ref(null);
+const filter = ref(null)
+const playBtn = ref(null)
 const props = defineProps({
   bgImage: {
     type: String,
@@ -60,12 +93,54 @@ const props = defineProps({
 const state = reactive({
   bgStyle: computed(() => {
     return `background-image:url(${props.bgImage})`
-  })
+  }),
+  imageHeight: 0,
+  minTranslateY: 0,
+  scrollY: 0,
 })
-const random = () => {}
-const back =() => {
+watch(() => state.scrollY, (newY) => {
+  let translateY = Math.max(state.minTranslateY, newY);
+  let zIndex = 0;
+  let scale = 1;
+  let blur = 0;
+  layer.value.style[
+      transform
+  ] = `translate3d(0,${translateY}px,0)`;
+  filter.value.style[backdrop] = `blur(${blur}px)`;
+
+  const percent = Math.abs(newY / state.imageHeight);
+  if (newY > 0) {
+      scale = 1 + percent;
+      zIndex = 10;
+  } else {
+      blur = Math.min(20, percent * 20);
+  }
+  if (newY < state.minTranslateY) {
+      zIndex = 10;
+      bgImage.value.style.paddingTop = 0;
+      bgImage.value.style.height = `${RESERVED_HEIGHT}px`;
+      playBtn.value.style.display = "none";
+  } else {
+      bgImage.value.style.paddingTop = "70%";
+      bgImage.value.style.height = 0;
+      playBtn.value.style.display = "";
+  }
+  bgImage.value.style[transform] = `scale(${scale})`;
+  bgImage.value.style.zIndex = zIndex;
+})
+const random = () => { }
+const back = () => {
   router.back();
 }
+const selectItem = () => { }
+const handleScroll = (pos) => {
+  state.scrollY = pos.y
+}
+onMounted(() => {
+  state.imageHeight = bgImage.value.clientHeight;
+  state.minTranslateY = -state.imageHeight + RESERVED_HEIGHT;
+  list.value.$el.style.top = `${state.imageHeight}px`
+})
 </script>
 
 <style lang="scss" scoped>
@@ -115,20 +190,59 @@ const back =() => {
       bottom: 20px;
       z-index: 50;
       width: 100%;
-    }
-    .filter {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(7, 17, 27, 0.4);
+      .play {
+        box-sizing: border-box;
+        width: 135px;
+        padding: 7px 0;
+        margin: 0 auto;
+        text-align: center;
+        border: 1px solid #ffcd32;
+        color: #ffcd32;
+        border-radius: 100px;
+        font-size: 0;
+        .icon-play {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 6px;
+          font-size: 16px;
+        }
+        .text {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 12px;
+        }
+      }
     }
   }
-  .bg-layer {
-    position: relative;
+  .filter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background: #222;
+    background: rgba(7, 17, 27, 0.4);
   }
+  .list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background: #222;
+    overflow: inherit;
+    .song-list-wrapper {
+      padding: 20px 30px;
+    }
+    .loading-container {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+.bg-layer {
+  position: relative;
+  height: 100%;
+  background: #222;
 }
 </style>
