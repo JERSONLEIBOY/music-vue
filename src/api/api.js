@@ -2,6 +2,7 @@ import api from "./axios";
 // 排行榜
 const toplist = () => { return api.get('/toplist', {}) }
 const topListDetail = () => { return api.get('/toplist/detail', {}) }
+const listDetail = ({ id = '', s = 8 }) => { return api.get(`/playlist/detail?id=${id}&s=${s}`, {}) }
 // 获取热门歌手
 const topArtists = ({ limit = 30, offset = 0 }) => { return api.get(`/artists?limit=${limit}&offset=${offset}`, {}) }
 const artistList = ({ type = -1, area = -1, initial = '', limit = 50, offset = 0 }) => { return api.get(`/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}&offset=${offset}`, {}) }
@@ -38,5 +39,6 @@ export {
   topArtists,
   artistList,
   toplist,
-  topListDetail
+  topListDetail,
+  listDetail
 }

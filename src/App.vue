@@ -6,7 +6,7 @@ import tab from "@/components/tab/tab.vue";
 <template>
   <m-header></m-header>
   <tab></tab>
-  <router-view />
+  <router-view></router-view>
 </template>
 
 <style>

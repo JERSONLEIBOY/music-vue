@@ -8,7 +8,7 @@
       ref="toplist"
     >
       <ul>
-        <li class="item" v-for="(item, index) in state.topList" :key="index">
+        <li class="item" v-for="(item, index) in state.topList" :key="index" @click="selectItem(item)">
           <div class="icon">
             <van-image
               width="100"
@@ -25,16 +25,22 @@
           </ul>
         </li>
       </ul>
+      <div class="loading-container" v-show="!state.topList.length">
+        <loading :dataStatus="'LOADING'"></loading>
+      </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
 import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance();
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
 import { Toast } from 'vant';
+const router = useRouter();
 const state = reactive({
   topList: []
 })
@@ -43,7 +49,12 @@ const toplist = async () => {
   if (res.code !== 200) {
     return Toast.fail('数据请求失败')
   }
-  state.topList = res.list;
+  state.topList = res.list.splice(0, 4)
+}
+const selectItem = (item) => {
+  router.push({
+    path: `/rank/${item.id}`,
+  })
 }
 onMounted(() => {
   toplist();
@@ -90,6 +101,12 @@ onMounted(() => {
           white-space: nowrap;
         }
       }
+    }
+    .loading-container {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }
