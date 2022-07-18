@@ -10,15 +10,19 @@
       :currentIndex="state.currentIndex"
       @pullingUp="handlePullingUp"
       @onShortcutTouchStart="selectType"
+      @selectItem="handleSelectItem"
     ></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
 import { reactive, getCurrentInstance, onMounted } from 'vue';
 import ListView from "@/base/listview/listview.vue";
+import { useRouter } from 'vue-router';
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
+const router = useRouter();
 const state = reactive({
   singerList: [],
   params: {
@@ -124,6 +128,11 @@ const selectType = (item, index) => {
   }
   topArtists(state.params).catch((error) => {
     console.log(error)
+  })
+}
+const handleSelectItem = (item) => {
+  router.push({
+    path: `/singer/${item.id}`
   })
 }
 onMounted(() => {

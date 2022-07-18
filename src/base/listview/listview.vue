@@ -15,6 +15,7 @@
           <li
             class="list-group-item"
             v-for="(item, index) in dataList"
+            @click="selectItem(item)"
             :key="index"
           >
             <van-image
@@ -53,7 +54,7 @@
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
-const emit = defineEmits(['pullingUp', 'onShortcutTouchStart'])
+const emit = defineEmits(['pullingUp', 'onShortcutTouchStart', 'selectItem'])
 const props = defineProps({
   dataList: {
     type: Array,
@@ -81,6 +82,9 @@ const pullingUp = () => {
 }
 const onShortcutTouchStart = (item, index) => {
   emit('onShortcutTouchStart', item, index)
+}
+const selectItem = (item) => {
+  emit('selectItem', item)
 }
 </script>
 
