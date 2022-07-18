@@ -28,6 +28,7 @@ export default defineConfig(({command, mode}) => {
       open: true,//启动时自动打开浏览器
       hmr: true,//开启热更新
       port: '80',
+      host: '0.0.0.0',
       cors: true,
       proxy: {
         "/api": {

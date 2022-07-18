@@ -11,8 +11,8 @@
         <li class="item" v-for="(item, index) in state.topList" :key="index" @click="selectItem(item)">
           <div class="icon">
             <van-image
-              width="100"
-              height="100"
+              width="100%"
+              height="100%"
               lazy-load
               :src="item.coverImgUrl"
             />

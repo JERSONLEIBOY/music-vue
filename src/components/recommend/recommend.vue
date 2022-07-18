@@ -32,6 +32,7 @@
               class="item"
               v-for="(item, index) in state.disclist"
               :key="index"
+              @click="selectItem(item)"
             >
               <div class="icon">
                 <img
@@ -56,12 +57,16 @@
         </div>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
 import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
 const { proxy } = getCurrentInstance();
 const state = reactive({
   recommends: [],
@@ -79,7 +84,11 @@ const getMusicList = async () => {
     state.disclist = res.playlists;
   }
 }
-const pulldown = () => { }
+const selectItem = (item) => {
+  router.push({
+    path: `/recommend/${item.id}`,
+  })
+}
 onMounted(() => {
   _getRecommend()
   getMusicList()
