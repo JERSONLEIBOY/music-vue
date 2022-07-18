@@ -1,15 +1,17 @@
 <template>
   <div class="music-list">
-    <div
-      class="back"
-      @click="back"
-    >
-      <van-icon
-        class="icon-back"
-        name="arrow-left"
-      />
+    <div class="music-top">
+      <div
+        class="back"
+        @click="back"
+      >
+        <van-icon
+          class="icon-back"
+          name="arrow-left"
+        />
+      </div>
+      <h1 class="title">{{ props.title }}</h1>
     </div>
-    <h1 class="title">{{ props.title }}</h1>
     <div
       class="bg-image"
       :style="state.bgStyle"
@@ -104,26 +106,26 @@ watch(() => state.scrollY, (newY) => {
   let scale = 1;
   let blur = 0;
   layer.value.style[
-      transform
+    transform
   ] = `translate3d(0,${translateY}px,0)`;
   filter.value.style[backdrop] = `blur(${blur}px)`;
 
   const percent = Math.abs(newY / state.imageHeight);
   if (newY > 0) {
-      scale = 1 + percent;
-      zIndex = 10;
+    scale = 1 + percent;
+    zIndex = 10;
   } else {
-      blur = Math.min(20, percent * 20);
+    blur = Math.min(20, percent * 20);
   }
   if (newY < state.minTranslateY) {
-      zIndex = 10;
-      bgImage.value.style.paddingTop = 0;
-      bgImage.value.style.height = `${RESERVED_HEIGHT}px`;
-      playBtn.value.style.display = "none";
+    zIndex = 10;
+    bgImage.value.style.paddingTop = 0;
+    bgImage.value.style.height = `${RESERVED_HEIGHT}px`;
+    playBtn.value.style.display = "none";
   } else {
-      bgImage.value.style.paddingTop = "70%";
-      bgImage.value.style.height = 0;
-      playBtn.value.style.display = "";
+    bgImage.value.style.paddingTop = "70%";
+    bgImage.value.style.height = 0;
+    playBtn.value.style.display = "";
   }
   bgImage.value.style[transform] = `scale(${scale})`;
   bgImage.value.style.zIndex = zIndex;
@@ -152,31 +154,33 @@ onMounted(() => {
   bottom: 0;
   right: 0;
   background: #222;
-  .back {
+  .music-top {
     position: absolute;
-    top: 0;
-    left: 6px;
+    left: 0;
+    right: 0;
     z-index: 50;
-    .icon-back {
-      display: block;
-      padding: 10px;
-      font-size: 22px;
-      color: #ffcd32;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    .back {
+      .icon-back {
+        display: block;
+        font-size: 22px;
+        color: #ffcd32;
+      }
     }
-  }
-  .title {
-    position: absolute;
-    top: 0;
-    left: 10%;
-    z-index: 40;
-    width: 80%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: center;
-    line-height: 40px;
-    font-size: 18px;
-    color: #fff;
+    .title {
+      flex: 1;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      text-align: center;
+      line-height: 40px;
+      font-size: 18px;
+      color: #fff;
+    }
   }
   .bg-image {
     position: relative;

@@ -1,5 +1,7 @@
 <template>
-  <music-list :title="state.title" :bg-image="state.bgImage" :songs="state.songs"></music-list>
+  <transition name="slide">
+    <music-list :title="state.title" :bg-image="state.bgImage" :songs="state.songs"></music-list>
+  </transition>
 </template>
 
 <script setup>
@@ -30,5 +32,13 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.3s;
+}
+.slide-enter-from, .slide-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
+.slide-leave-from, .slide-enter-to {
+  transform: translate3d(0, 0, 0);
+}
 </style>
