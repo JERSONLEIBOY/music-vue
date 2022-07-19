@@ -1,9 +1,9 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
-      <search-box ref="searchbox" :query="state.query" @input="onQueryChange"></search-box>
+      <search-box ref="searchbox" :query="state.query" @input="onQueryChange" @clear="handleClickClear"></search-box>
     </div>
-    <div class="shortcut-wrapper">
+    <div class="shortcut-wrapper" v-show="!state.query">
       <div class="shortcut">
         <div>
           <div class="hot-key">
@@ -25,14 +25,16 @@
         </div>
       </div>
     </div>
-    <div class="search-result">
-
+    <div class="search-result" v-show="state.query" ref="searchResult">
+      <suggest ref="suggest" :query="state.query"></suggest>
     </div>
   </div>
 </template>
 
 <script setup>
 import SearchBox from '@/base/search-box/search-box.vue'
+import SearchList from '@/base/search-list/search-list.vue'
+import Suggest from '@/components/suggest/suggest.vue'
 import { reactive, getCurrentInstance, onMounted } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
@@ -43,6 +45,9 @@ const state = reactive({
 })
 const onQueryChange = (query) => {
   state.query = query.searchValue
+}
+const handleClickClear = (query) => {
+  state.query = ''
 }
 const _getHotKey = async () => {
   const { data: res } = await proxy.$http.serachHot();
@@ -108,6 +113,12 @@ onMounted(() => {
         }
       }
     }
+  }
+  .search-result {
+    position: fixed;
+    width: 100%;
+    top: 178px;
+    bottom: 0;
   }
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
-  <div :class="{ wrapper: true, x: props.scrollX }" ref="wrapper">
+  <div
+    :class="{ wrapper: true, x: props.scrollX }"
+    ref="wrapper"
+  >
     <slot></slot>
   </div>
 </template>
@@ -18,7 +21,7 @@ BScroll.use(ObserveDOM)
 BScroll.use(ObserveImage)
 BScroll.use(Pullup)
 BScroll.use(Pulldown)
-const emit = defineEmits(['ckick', 'beforeScroll', 'afterScroll', 'scroll', 'refresh'])
+const emit = defineEmits(['ckick', 'beforeScroll', 'afterScroll', 'scroll'])
 const props = defineProps({
   /**
    * 1 滚动的时候会派发scroll事件，会截流。
@@ -92,8 +95,24 @@ const props = defineProps({
     default: []
   }
 })
-watch(props.data, () => {
-  bscroll.refresh();
+watch(() => props.data, () => {
+  setTimeout(() => {
+    refresh();
+  }, 20)
+})
+const refresh = () => {
+  bscroll && bscroll.refresh();
+}
+const scrollTo = () => {
+  bscroll && bscroll.scrollTo.apply(bscroll, arguments)
+}
+const scrollToElement = () => {
+  bscroll && bscroll.scrollToElement.apply(bscroll, arguments)
+}
+defineExpose({
+  refresh,
+  scrollTo,
+  scrollToElement
 })
 onMounted(() => {
   bscroll = new BScroll(wrapper.value, {
@@ -161,6 +180,7 @@ onMounted(() => {
     })
   }
 })
+
 </script>
 
 <style scoped lang="scss">

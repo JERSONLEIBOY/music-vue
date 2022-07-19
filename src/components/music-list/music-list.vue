@@ -55,6 +55,9 @@
           :songs="props.songs"
         ></song-list>
       </div>
+      <div class="loading-container" v-show="!props.songs.length">
+        <loading :dataStatus="'LOADING'"></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -64,6 +67,7 @@ import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'v
 import { prefixStyle } from "@/utils/dom.js"
 import Scroll from '@/base/scroll/scroll.vue'
 import SongList from "@/base/song-list/song-list.vue"
+import Loading from "@/base/loading/loading.vue"
 import { useRouter } from 'vue-router';
 const transform = prefixStyle("transform");
 const backdrop = prefixStyle("backdrop-filter");

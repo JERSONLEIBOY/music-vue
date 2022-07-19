@@ -31,9 +31,10 @@ const logout = () => {
   return api.get(`/logout`, {})
 }
 // 热门搜索
+const cloudsearch = ({ keywords = '', limit = 30, offset = 0, type = '1' }) => { return api.get(`/cloudsearch?keywords=${keywords}&limit=${limit}&offset=${offset}&type=${type}`, {}) }
 const serachHot = () => { return api.get('/search/hot', {}) }
 // 搜索
-const search = ({ keywords = '' }) => { return api.get(`/search?keywords=${keywords}`, {}) }
+const search = ({ keywords = '', limit = 30, offset = 0 }) => { return api.get(`/search?keywords=${keywords}&limit=${limit}&offset=${offset}`, {}) }
 export {
   login,
   logout,
@@ -47,5 +48,6 @@ export {
   listDetail,
   artists,
   serachHot,
-  search
+  search,
+  cloudsearch
 }
