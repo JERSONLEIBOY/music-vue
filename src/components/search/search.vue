@@ -49,6 +49,9 @@ const onQueryChange = (query) => {
 const handleClickClear = (query) => {
   state.query = ''
 }
+const addQuery = (item) => {
+  state.query = item.first;
+}
 const _getHotKey = async () => {
   const { data: res } = await proxy.$http.serachHot();
   if (res.code !== 200) {

@@ -22,7 +22,7 @@
           />
         </div>
         <div class="name">
-          <p class="text">{{item.name}}</p>
+          <p class="text">{{item.name}}--{{getDesc(item)}}</p>
         </div>
       </li>
       <loading
@@ -62,8 +62,20 @@ const state = reactive({
 watch(() => [props.query], ([newQuery]) => {
   if (newQuery) {
     search(newQuery);
+  } else {
+    state.hasMore = false;
+    state.result = [];
+    state.offset = 0;
+    state.dataStatus = 'HAS_MORE_DATA'
   }
 })
+const getDesc = (songs) => {
+  let name = [];
+  songs.ar.forEach(element => {
+    name.push(element.name)
+  });
+  return `${name.join('/')}`
+}
 const search = async (newQuery) => {
   if (state.dataStatus == 'LOADING') return;
   state.dataStatus = 'LOADING';
@@ -71,8 +83,9 @@ const search = async (newQuery) => {
   if (res.code !== 200) {
     return Toast.fail('数据请求失败')
   }
-  state.result = state.offset !== 0 ? [...state.result, ...res.result.songs] : res.result.songs;
-  if (!res.result.songs.length || state.offset >= res.result.songCount) {
+  let songs = res.result.songs || [];
+  state.result = state.offset !== 0 ? [...state.result, ...songs] : songs;
+  if (!songs.length || state.offset >= res.result.songCount) {
     state.hasMore = false;
     state.dataStatus = 'NO_MORE_DATA'
   } else {

@@ -47,6 +47,9 @@ const search = () => {
     searchValue: state.query
   })
 }
+watch(() => props.query, (newQuery) => {
+  state.query = newQuery
+})
 watch(() => state.query, (newQuery) => {
   // state.query = newQuery
   emit('input', {
