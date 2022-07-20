@@ -4,7 +4,7 @@
       <search-box ref="searchbox" :query="state.query" @input="onQueryChange" @clear="handleClickClear"></search-box>
     </div>
     <div class="shortcut-wrapper" v-show="!state.query">
-      <div class="shortcut">
+      <scroll class="shortcut" :data="state.shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -17,14 +17,14 @@
           <div class="search-history" v-show="state.searchHistory.length">
             <h1 class="title">
               <span class="text">搜索历史</span>
-              <span class="clear">
+              <span class="clear" @click="showConfirm">
                 <van-icon class="icon-clear" name="close" />
               </span>
             </h1>
             <search-list @delete="deleteSearchHistory" @select="addQuery" :searches="state.searchHistory"></search-list>
           </div>
         </div>
-      </div>
+      </scroll>
     </div>
     <div class="search-result" v-show="state.query" ref="searchResult">
       <suggest ref="suggest" :query="state.query" @select="saveSearch"></suggest>
@@ -34,10 +34,11 @@
 
 <script setup>
 import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+import Scroll from '@/base/scroll/scroll.vue'
 import SearchBox from '@/base/search-box/search-box.vue'
 import SearchList from '@/base/search-list/search-list.vue'
 import Suggest from '@/components/suggest/suggest.vue'
-import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { reactive, getCurrentInstance, onMounted, computed } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 const storeActions = useStoreActions('storeState', ['saveSearchHistory', 'deleteSearchHistory'])
@@ -45,7 +46,10 @@ const storeState = useStoreState('storeState', ['searchHistory'])
 const state = reactive({
   query: '',
   hotKey: [],
-  searchHistory: storeState.searchHistory
+  searchHistory: storeState.searchHistory,
+  shortcut: computed(() => {
+    return state.hotKey.concat(state.searchHistory)
+  })
 })
 const onQueryChange = (query) => {
   state.query = query.searchValue
@@ -69,6 +73,7 @@ const saveSearch = (item) => {
 const deleteSearchHistory = (item) => {
   storeActions.deleteSearchHistory(item)
 }
+const showConfirm = () => {}
 onMounted(() => {
   _getHotKey()
 })
