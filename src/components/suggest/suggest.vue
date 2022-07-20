@@ -62,7 +62,9 @@ const state = reactive({
 })
 watch(() => [props.query], ([newQuery]) => {
   if (newQuery) {
-    search(newQuery);
+    search(newQuery).catch((error) => {
+      console.log(error)
+    })
   } else {
     state.hasMore = false;
     state.result = [];

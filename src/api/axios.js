@@ -69,8 +69,7 @@ instance.interceptors.request.use((config) => {
   stopRepeatRequest(requestList, config.url, cancelFn, `不要连续请求：${config.url}，速度太快了`)
   return config
 }, (error) => {
-  handleErrorData(error)
-  // return Promise.reject(error)
+  return Promise.reject(error)
 })
 
 // 后置拦截器(获取到响应式的拦截)
@@ -81,39 +80,10 @@ instance.interceptors.response.use((response) => {
   })
   return response
 }, (error) => {
-  handleErrorData(error)
-  // return Promise.reject(error)
+  return Promise.reject(error)
 })
 
 // 对错误信息的处理函数
-function handleErrorData(errMsg) {
-  if (errMsg.message) {
-    console.log(errMsg.message)
-    return
-  } else {
-    switch(errMsg.code) {
-      case 401:
-        console.log('未授权，重新登陆')
-        break
-      case 403:
-        console.log('拒绝访问')
-        break
-      case 404:
-        console.log('很抱歉，资源未找到')
-        break
-      case 500:
-        console.log('服务器错误')
-        break
-      case 504:
-        console.log('网络超时')
-        break
-      default:
-        console.log('服务器正在联调中，请稍后')
-        break
-    }
-  }
-}
-
 const ajaxMethod = ['get', 'post']
 const api = {}
 ajaxMethod.forEach(method => {

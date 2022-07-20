@@ -48,7 +48,9 @@ export default defineConfig(({command, mode}) => {
       // 设置别名路径
       alias: {
         '@': pathResolve('src')
-      }
+      },
+      // 忽略后缀
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
     },
     build: {
       assetsDir: 'static',

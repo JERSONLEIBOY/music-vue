@@ -29,6 +29,7 @@
     <div class="search-result" v-show="state.query" ref="searchResult">
       <suggest ref="suggest" :query="state.query" @select="saveSearch"></suggest>
     </div>
+    <confirm ref="confirm" @confirm="clearSearchHistory" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
   </div>
 </template>
 
@@ -38,11 +39,13 @@ import Scroll from '@/base/scroll/scroll.vue'
 import SearchBox from '@/base/search-box/search-box.vue'
 import SearchList from '@/base/search-list/search-list.vue'
 import Suggest from '@/components/suggest/suggest.vue'
-import { reactive, getCurrentInstance, onMounted, computed } from 'vue';
+import Confirm from '@/base/confirm/confirm.vue'
+import { reactive, getCurrentInstance, onMounted, computed, ref } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
-const storeActions = useStoreActions('storeState', ['saveSearchHistory', 'deleteSearchHistory'])
+const storeActions = useStoreActions('storeState', ['saveSearchHistory', 'deleteSearchHistory', 'clearSearchHistory'])
 const storeState = useStoreState('storeState', ['searchHistory'])
+const confirm = ref(null)
 const state = reactive({
   query: '',
   hotKey: [],
@@ -73,7 +76,12 @@ const saveSearch = (item) => {
 const deleteSearchHistory = (item) => {
   storeActions.deleteSearchHistory(item)
 }
-const showConfirm = () => {}
+const showConfirm = () => {
+  confirm.value.show()
+}
+const clearSearchHistory = () => {
+  storeActions.clearSearchHistory()
+}
 onMounted(() => {
   _getHotKey()
 })
