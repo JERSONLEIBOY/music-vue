@@ -56,6 +56,9 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!state.recommends.length">
+        <loading :dataStatus="'LOADING'"></loading>
+      </div>
     </scroll>
     <router-view v-slot="{ Component }">
       <transition :appear="true" name="slide">
@@ -67,6 +70,7 @@
 
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
+import Loading from "@/base/loading/loading.vue"
 import { reactive, getCurrentInstance, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -152,6 +156,12 @@ onMounted(() => {
           }
         }
       }
+    }
+    .loading-container {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }

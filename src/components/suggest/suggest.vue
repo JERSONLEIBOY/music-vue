@@ -31,7 +31,7 @@
     </ul>
     <div
       class="no-result-wrapper"
-      v-show="!state.hasMore && !state.result.length"
+      v-show="state.hasMore && !state.result.length"
     >
       <no-result title="抱歉，暂无搜索结果"></no-result>
     </div>
@@ -99,7 +99,9 @@ const search = async (newQuery) => {
 const handlePullingUp = () => {
   if (!state.hasMore) return;
   state.offset = state.result.length;
-  search(props.query)
+  search(props.query).catch((error) => {
+    console/log(error)
+  })
 }
 const selectItem = (item) => {
   emit('select', item)
