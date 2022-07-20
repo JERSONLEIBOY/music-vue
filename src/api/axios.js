@@ -69,7 +69,8 @@ instance.interceptors.request.use((config) => {
   stopRepeatRequest(requestList, config.url, cancelFn, `不要连续请求：${config.url}，速度太快了`)
   return config
 }, (error) => {
-  return Promise.reject(error)
+  handleErrorData(error)
+  // return Promise.reject(error)
 })
 
 // 后置拦截器(获取到响应式的拦截)
@@ -80,13 +81,15 @@ instance.interceptors.response.use((response) => {
   })
   return response
 }, (error) => {
-  return Promise.reject(error)
+  handleErrorData(error)
+  // return Promise.reject(error)
 })
 
 // 对错误信息的处理函数
 function handleErrorData(errMsg) {
   if (errMsg.message) {
     console.log(errMsg.message)
+    return
   } else {
     switch(errMsg.code) {
       case 401:

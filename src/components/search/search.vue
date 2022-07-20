@@ -14,34 +14,38 @@
               </li>
             </ul>
           </div>
-          <div class="search-history">
+          <div class="search-history" v-show="state.searchHistory.length">
             <h1 class="title">
               <span class="text">搜索历史</span>
               <span class="clear">
                 <van-icon class="icon-clear" name="close" />
               </span>
             </h1>
+            <search-list @delete="deleteSearchHistory" @select="addQuery" :searches="state.searchHistory"></search-list>
           </div>
         </div>
       </div>
     </div>
     <div class="search-result" v-show="state.query" ref="searchResult">
-      <suggest ref="suggest" :query="state.query"></suggest>
+      <suggest ref="suggest" :query="state.query" @select="saveSearch"></suggest>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
 import SearchBox from '@/base/search-box/search-box.vue'
 import SearchList from '@/base/search-list/search-list.vue'
 import Suggest from '@/components/suggest/suggest.vue'
 import { reactive, getCurrentInstance, onMounted } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
-
+const storeActions = useStoreActions('storeState', ['saveSearchHistory', 'deleteSearchHistory'])
+const storeState = useStoreState('storeState', ['searchHistory'])
 const state = reactive({
   query: '',
-  hotKey: []
+  hotKey: [],
+  searchHistory: storeState.searchHistory
 })
 const onQueryChange = (query) => {
   state.query = query.searchValue
@@ -58,6 +62,12 @@ const _getHotKey = async () => {
     return Toast.fail('数据请求失败')
   }
   state.hotKey = res.result.hots;
+}
+const saveSearch = (item) => {
+  storeActions.saveSearchHistory(state.query)
+}
+const deleteSearchHistory = (item) => {
+  storeActions.deleteSearchHistory(item)
 }
 onMounted(() => {
   _getHotKey()

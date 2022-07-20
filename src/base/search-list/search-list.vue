@@ -47,7 +47,7 @@ const deleteOne = (item) => {
     .icon {
       position: relative;
       .icon-delete {
-        font-size: 12px;
+        font-size: 14px;
         color: rgba($color: #fff, $alpha: .3);
       }
     }

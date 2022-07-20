@@ -47,6 +47,7 @@ const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 import BScroll from '@better-scroll/core';
 const limit = 20
+const emit = defineEmits(['select'])
 const props = defineProps({
   query: {
     type: String,
@@ -98,7 +99,9 @@ const handlePullingUp = () => {
   state.offset = state.result.length;
   search(props.query)
 }
-const selectItem = (item) => { }
+const selectItem = (item) => {
+  emit('select', item)
+}
 </script>
 
 <style lang="scss" scoped>
