@@ -46,7 +46,7 @@ import { reactive, getCurrentInstance, watch, nextTick } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 import BScroll from '@better-scroll/core';
-const limit = 20
+const limit = 30
 const emit = defineEmits(['select'])
 const props = defineProps({
   query: {
