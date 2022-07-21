@@ -1,5 +1,29 @@
 import { formatSongInfo } from '@/utils/song';
 export default {
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  },
+  shuffle(arr) {
+    let _arr = arr.slice()
+    for (let i = 0; i < _arr.length; i++) {
+      let j = getRandomInt(0, i)
+      let t = _arr[i]
+      _arr[i] = _arr[j]
+      _arr[j] = t
+    }
+    return _arr
+  },
+  debounce(func, delay) {
+    let timer
+    return function (...args) {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(() => {
+        func.apply(this, args)
+      }, delay)
+    }
+  },
   // 数字过万的处理
   formartNum(val) {
     let num = 0

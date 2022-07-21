@@ -63,12 +63,14 @@
 </template>
 
 <script setup>
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
 import { prefixStyle } from "@/utils/dom.js"
 import Scroll from '@/base/scroll/scroll.vue'
 import SongList from "@/base/song-list/song-list.vue"
 import Loading from "@/base/loading/loading.vue"
 import { useRouter } from 'vue-router';
+const storeActions = useStoreActions('storeState', ['selectPlay', 'randomPlay'])
 const transform = prefixStyle("transform");
 const backdrop = prefixStyle("backdrop-filter");
 const RESERVED_HEIGHT = 40;
@@ -138,7 +140,12 @@ const random = () => { }
 const back = () => {
   router.back();
 }
-const selectItem = () => { }
+const selectItem = (item, index) => {
+  storeActions.selectPlay({
+    list: props.songs,
+    index
+  })
+}
 const handleScroll = (pos) => {
   state.scrollY = pos.y
 }

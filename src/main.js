@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import { Lazyload } from 'vant';
 import "@/assets/css/global.css"
+import "@/assets/css/icon.css"
 import 'vant/es/toast/style';
 import * as getApi from '@/api/api'
 import util from '@/utils/util'
