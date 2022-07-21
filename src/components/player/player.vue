@@ -81,7 +81,7 @@ const state = reactive({
     return storeGetters.playlist
   })
 })
-
+console.log(state.playlist)
 const enter = () => {}
 const afterEnter = () => {}
 const leave = () => {}
