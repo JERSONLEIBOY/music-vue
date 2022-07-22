@@ -6,6 +6,7 @@ import Singer from '../components/singer/singer.vue';
 import SingerDetail from '../components/singer-detail/singer-detail.vue';
 import Disc from '../components/disc/disc.vue';
 import TopList from '../components/top-list/top-list.vue';
+import HelloWord from '../components/HelloWorld.vue';
 const routes = [
   {
     path: '/',
@@ -47,6 +48,11 @@ const routes = [
       path: ':id',
       component: SingerDetail
     }]
+  },
+  {
+    path: '/HelloWord',
+    name: 'HelloWord',
+    component: HelloWord,
   }
 ]
 const router = createRouter({

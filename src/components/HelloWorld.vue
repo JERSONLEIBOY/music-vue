@@ -13,6 +13,7 @@
       });
       console.log(storeActions)
       console.log(storeState)
+    console.log(storeGetters.isLogin.value)
     }
     console.log(storeState)
     console.log(storeActions)

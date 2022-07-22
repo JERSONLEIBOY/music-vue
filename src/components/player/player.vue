@@ -1,64 +1,74 @@
 <template>
   <div class="player" v-show="state.playlist.length > 0">
     <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
-      <div class="normal-player">
+      <div class="normal-player" v-show="state.fullScreen" ref="normalPlayer">
         <div class="background">
-          <img width="100%" height="100%" src="" alt="">
+          <img width="100%" height="100%" :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl" alt="">
         </div>
         <div class="top">
-          <div class="back">
+          <div class="back" @click="back">
             <i class="icon-back"></i>
           </div>
-          <h1 class="title"></h1>
-          <h2 class="subtitle"></h2>
+          <h1 class="title" v-html="state.currentSong.name"></h1>
+          <h2 class="subtitle">{{getDesc(state.currentSong)}}</h2>
         </div>
         <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
-                <img class="image" src="" alt="">
+              <div class="cd" :class="cdCls">
+                <img class="image" :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl" alt="">
               </div>
             </div>
             <div class="playing-lyric-wrapper">
-              <div class="playing-lyric"></div>
+              <div class="playing-lyric">{{state.playingLyric}}</div>
             </div>
           </div>
-          <scroll class="middle-r" ref="lyricList">
+          <scroll class="middle-r" :probeType="3" ref="lyricList" :refreshScroll="true" :data="state.currentLyric && state.currentLyric.lines">
             <div class="lyric-wrapper">
-              <div>
-                <p class="text" ref="lyricLine"></p>
+              <div v-if="state.currentLyric">
+                <p class="text" ref="lyricLine" :class="{'current': state.currentLineNum === index}" v-for="(item, index) in state.currentLyric.lines" :key="index">{{item.txt}}</p>
               </div>
             </div>
           </scroll>
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
-            <span class="dot"></span>
-            <span class="dot"></span>
+            <span class="dot" :class="{'active': state.currentShow === 'cd'}"></span>
+            <span class="dot" :class="{'active': state.currentShow === 'lyric'}"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l"></span>
+            <span class="time time-l">{{format(state.currentTime)}}</span>
             <div class="progress-bar-wrapper"></div>
-            <span class="time time-r"></span>
+            <span class="time time-r">{{state.currentSong.duration}}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left"></div>
-            <div class="icon i-left"></div>
-            <div class="icon i-center"></div>
-            <div class="icon i-right"></div>
-            <div class="icon i-right"></div>
+            <div class="icon i-left">
+              <i :class="iconMode"></i>
+            </div>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev"></i>
+            </div>
+            <div class="icon i-center" :class="disableCls">
+              <i :class="playIcon"></i>
+            </div>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="icon" :class="getFavoriteIcon(state.currentSong)"></i>
+            </div>
           </div>
         </div>
       </div>
     </transition>
     <transition name="mini">
-      <div class="mini-player">
+      <div class="mini-player" v-show="!state.fullScreen">
         <div class="icon">
-          <img width="40" height="40" src="" alt="">
+          <img :class="cdCls" width="40" height="40" :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl" alt="">
         </div>
         <div class="text">
-          <h2 class="name"></h2>
-          <p class="desc"></p>
+          <h2 class="name" v-html="state.currentSong.name"></h2>
+          <p class="desc">{{getDesc(state.currentSong)}}</p>
         </div>
         <div class="control"></div>
         <div class="control">
@@ -66,29 +76,274 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" src=""></audio>
+    <audio ref="audio" :src="state.currentSong.url" @play="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
 
 <script setup>
 import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+import animations from 'create-keyframe-animation'
 import Scroll from '@/base/scroll/scroll.vue'
+import {prefixStyle} from '@/utils/dom'
+import {playMode} from '@/utils/config'
+import Lyric from 'lyric-parser'
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
-const storeGetters = useStoreGetters('storeState', ['playlist'])
+import { Toast } from 'vant';
+const { proxy } = getCurrentInstance();
+const storeActions = useStoreActions('storeState', ['setFullScreen'])
+const storeGetters = useStoreGetters('storeState', ['playlist', 'currentIndex', 'fullScreen', 'playing', 'currentSong', 'mode'])
+const cdWrapper = ref(null)
+const lyricList = ref(null)
+const middleL = ref(null)
+const audio = ref(null)
+const lyricLine = ref(null)
 
 const state = reactive({
   playlist: computed(() => {
-    return storeGetters.playlist
-  })
+    return storeGetters.playlist.value
+  }),
+  currentIndex: computed(() => {
+    return storeGetters.currentIndex.value
+  }),
+  fullScreen: computed(() => {
+    return storeGetters.fullScreen.value
+  }),
+  playing: computed(() => {
+    return storeGetters.playing.value
+  }),
+  currentSong: computed(() => {
+    return storeGetters.currentSong.value
+  }),
+  mode: computed(() => {
+    return storeGetters.mode.value
+  }),
+  touch: {},
+  songReady: false,
+  currentTime: 0,
+  radius: 32,
+  currentLyric: null,
+  currentLineNum: 0,
+  currentShow: 'cd',
+  playingLyric: ''
 })
-console.log(state.playlist)
-const enter = () => {}
-const afterEnter = () => {}
-const leave = () => {}
-const afterLeave = () => {}
-const middleTouchStart = () => {}
-const middleTouchMove = () => {}
-const middleTouchEnd = () => {}
+const iconMode = computed(() => {
+  return state.mode === playMode.sequence ? 'icon-sequence' : state.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+})
+const cdCls = computed(() => {
+  return state.playing ? 'play' : 'play pause'
+})
+const playIcon = computed(() => {
+  return state.playing ? 'icon-pause' : 'icon-play'
+})
+const miniIcon = computed(() => {
+  return state.playing ? 'icon-pause-mini' : 'icon-play-mini'
+})
+const disableCls = computed(() => {
+  return state.songReady ? '' : 'disable'
+})
+const percent = computed(() => {
+  return state.currentTime / state.currentSong.duration
+})
+const enter = (el, done) => {
+  const {x, y, scale} = _getPosAndScale()
+  let animation = {
+    0: {
+      transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+    },
+    60: {
+      transform: `translate3d(0,0,0) scale(1.1)`
+    },
+    100: {
+      transform: `translate3d(0,0,0) scale(1)`
+    }
+  }
+  animations.registerAnimation({
+    name: 'move',
+    animation,
+    presets: {
+      duration: 400,
+      easing: 'linear'
+    }
+  })
+  animations.runAnimation(cdWrapper.value, 'move', done)
+}
+const afterEnter = () => {
+  animations.unregisterAnimation('move')
+  cdWrapper.value.style.animation = ''
+}
+const leave = (el, done) => {
+  cdWrapper.value.style.transition = 'all 0.4s'
+  const {x, y, scale} = _getPosAndScale()
+  cdWrapper.value.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale})`
+  cdWrapper.value.addEventListener('transitionend', done)
+}
+const afterLeave = () => {
+  cdWrapper.value.style.transition = ''
+  cdWrapper.value.style.transform = ''
+}
+const middleTouchStart = (e) => {
+  state.touch.initiated = true
+  // 用来判断是否是一次移动
+  state.touch.moved = false
+  const touch = e.touches[0]
+  state.touch.startX = touch.pageX
+  state.touch.startY = touch.pageY
+}
+const middleTouchMove = (e) => {
+  if (!state.touch.initiated) {
+    return
+  }
+  const touch = e.touches[0]
+  const deltaX = touch.pageX - state.touch.startX
+  const deltaY = touch.pageY - state.touch.startY
+  if (Math.abs(deltaY) > Math.abs(deltaX)) {
+    return
+  }
+  if (!state.touch.moved) {
+    state.touch.moved = true
+  }
+  const left = state.currentShow === 'cd' ? 0 : -window.innerWidth
+  const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+  state.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+  lyricList.value.$el.style.transform = `translate3d(${offsetWidth}px,0,0)`
+  lyricList.value.$el.style.transitionDuration = 0
+  middleL.value.style.opacity = 1 - state.touch.percent
+  middleL.value.style.transitionDuration = 0
+}
+const middleTouchEnd = (e) => {
+  if (!state.touch.moved) {
+    return
+  }
+  let offsetWidth
+  let opacity
+  if (state.currentShow === 'cd') {
+    if (state.touch.percent > 0.1) {
+      offsetWidth = -window.innerWidth
+      opacity = 0
+      state.currentShow = 'lyric'
+    } else {
+      offsetWidth = 0
+      opacity = 1
+    }
+  } else {
+    if (state.touch.percent < 0.9) {
+      offsetWidth = 0
+      state.currentShow = 'cd'
+      opacity = 1
+    } else {
+      offsetWidth = -window.innerWidth
+      opacity = 0
+    }
+  }
+  const time = 300
+  lyricList.value.$el.style.transform = `translate3d(${offsetWidth}px,0,0)`
+  lyricList.value.$el.style.transitionDuration = `${time}ms`
+  middleL.value.style.opacity = opacity
+  middleL.value.style.transitionDuration = `${time}ms`
+  state.touch.initiated = false
+}
+const _getPosAndScale = () => {
+  const targetWidth = 40
+  const paddingLeft = 40
+  const paddingBottom = 30
+  const paddingTop = 80
+  const width = window.innerWidth * 0.8
+  const scale = targetWidth / width
+  const x = -(window.innerWidth / 2 - paddingLeft)
+  const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+  return {
+    x,
+    y,
+    scale
+  }
+}
+const back = () => {
+  storeActions.setFullScreen(false)
+}
+const getDesc = (song) => {
+  if (Object.keys(song).length === 0) return
+  let name = [];
+  song.singer.forEach(element => {
+    name.push(element.name)
+  });
+  return `${name.join('/')}.${song.album.name}`;
+}
+const getLyric = async (id) => {
+  const { data: res } = await proxy.$http.lyrics({ id: id })
+  if (res.code !== 200) {
+    return Toast.fail('数据请求失败')
+  }
+  state.currentLyric = new Lyric(res.lrc.lyric, handleLyric)
+  if (state.playing) {
+    state.currentLyric.play()
+  }
+}
+const handleLyric = ({lineNum, txt}) => {
+  state.currentLineNum = lineNum;
+  if (lineNum > 5) {
+    let lineEl = lyricLine.value[lineNum - 5]
+    lyricList.value.scrollToElement(lineEl, 1000)
+  } else {
+    lyricList.value.scrollTo(0, 0, 1000)
+  }
+  state.playingLyric = txt
+}
+const format = (interval) => {
+  interval = interval | 0
+  const minute = interval / 60 | 0
+  const second = _pad(interval % 60)
+  return `${minute}:${second}`
+}
+const _pad = (num, n = 2) => {
+  let len = num.toString().length
+  while (len < n) {
+    num = '0' + num
+    len++
+  }
+  return num
+}
+const getFavoriteIcon = () => {
+
+}
+const ready = () => {
+  state.songReady = true;
+}
+const error = () => {
+  state.songReady = true;
+}
+const updateTime = (e) => {
+  state.currentTime = e.target.currentTime
+}
+const end = () => {
+  if (state.mode == playMode.loop) {
+    loop()
+  } else {
+    next()
+  }
+}
+const loop = () => {}
+const next = () => {}
+watch(() => state.currentSong, (newSong, oldSong) => {
+  console.log(newSong, oldSong)
+  if (!newSong.id) {
+    return
+  }
+  if (newSong.id === oldSong.id) {
+    return
+  }
+  if (state.currentLyric) {
+    state.currentLyric.stop()
+    state.currentTime = 0
+    state.playingLyric = ''
+    state.currentLineNum = 0
+  }
+  let timer = null;
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    audio.value.play()
+    getLyric(newSong.id)
+  }, 1000)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -110,6 +365,10 @@ const middleTouchEnd = () => {}
       z-index: -1;
       opacity: 0.6;
       filter: blur(20px);
+      img {
+        width: 100%;
+        height: 100%;
+      }
     }
     .top {
       position: relative;
@@ -245,6 +504,11 @@ const middleTouchEnd = () => {}
         }
       }
       .progress-wrapper {
+        display: flex;
+        align-items: center;
+        width: 80%;
+        margin: 0 auto;
+        padding: 10px 0;
         .time {
           color: #fff;
           font-size: 12px;
@@ -263,6 +527,8 @@ const middleTouchEnd = () => {}
         }
       }
       .operators {
+        display: flex;
+        align-items: center;
         .icon {
           flex: 1;
           color: #ffcd32;
@@ -294,10 +560,19 @@ const middleTouchEnd = () => {}
         transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
       }
     }
-    &.normal-enter, &.normal-leave-to {
+    &.normal-enter-from, &.normal-leave-to {
       opacity: 0;
       .top {
         transform: translate3d(0, -100px, 0);
+      }
+      .bottom {
+        transform: translate3d(0, 100px, 0);
+      }
+    }
+    &.normal-enter-to {
+      opacity: 1;
+      .top {
+        transform: translate3d(0, 0, 0);
       }
       .bottom {
         transform: translate3d(0, 100px, 0);

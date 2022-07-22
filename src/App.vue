@@ -7,7 +7,11 @@ import Player from "@/components/player/player.vue";
 <template>
   <m-header></m-header>
   <tab></tab>
-  <router-view></router-view>
+  <router-view v-slot="{ Component }">
+    <transition :appear="true" name="slide">
+      <component :is="Component"></component>
+    </transition>
+  </router-view>
   <player></player>
 </template>
 

@@ -71,6 +71,7 @@ import SongList from "@/base/song-list/song-list.vue"
 import Loading from "@/base/loading/loading.vue"
 import { useRouter } from 'vue-router';
 const storeActions = useStoreActions('storeState', ['selectPlay', 'randomPlay'])
+const storeGetters = useStoreGetters('storeState', ['playlist'])
 const transform = prefixStyle("transform");
 const backdrop = prefixStyle("backdrop-filter");
 const RESERVED_HEIGHT = 40;
@@ -105,6 +106,12 @@ const state = reactive({
   imageHeight: 0,
   minTranslateY: 0,
   scrollY: 0,
+  playlist: computed(() => {
+    return storeGetters.playlist.value
+  })
+})
+watch(() => state.playlist, (newVal) => {
+  console.log(newVal)
 })
 watch(() => state.scrollY, (newY) => {
   let translateY = Math.max(state.minTranslateY, newY);
@@ -145,6 +152,7 @@ const selectItem = (item, index) => {
     list: props.songs,
     index
   })
+  // console.log(storeGetters.playlist.value)
 }
 const handleScroll = (pos) => {
   state.scrollY = pos.y

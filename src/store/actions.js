@@ -19,6 +19,9 @@ const actions = {
   clearSearchHistory: ({ commit }, query) => {
     return commit('SET_SEARCH_HISTORY', clearSearch())
   },
+  setFullScreen: ({ commit }, fullScreen) => {
+    return commit('SET_FULL_SCREEN', fullScreen)
+  },
   selectPlay: ({ commit, state}, { list, index }) => {
     commit('SET_SEQUENCE_LIST', list)
     if (state.mode === playMode.random) {

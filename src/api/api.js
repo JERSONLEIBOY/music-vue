@@ -30,6 +30,8 @@ const yzm = (phone = '') => {
 const logout = () => {
   return api.get(`/logout`, {})
 }
+// 歌词
+const lyrics = ({ id = '' }) => { return api.get(`/lyric?id=${id}`, {}) }
 // 热门搜索
 const cloudsearch = ({ keywords = '', limit = 30, offset = 0, type = '1' }) => { return api.get(`/cloudsearch?keywords=${keywords}&limit=${limit}&offset=${offset}&type=${type}`, {}) }
 const serachHot = () => { return api.get('/search/hot', {}) }
@@ -49,5 +51,6 @@ export {
   artists,
   serachHot,
   search,
-  cloudsearch
+  cloudsearch,
+  lyrics
 }
