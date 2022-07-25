@@ -103,11 +103,11 @@ watch(() => props.data, () => {
 const refresh = () => {
   bscroll && bscroll.refresh();
 }
-const scrollTo = () => {
-  bscroll && bscroll.scrollTo.apply(bscroll, arguments)
+const scrollTo = (x, y, time) => {
+  bscroll && bscroll.scrollTo(x, y, time)
 }
-const scrollToElement = () => {
-  bscroll && bscroll.scrollToElement.apply(bscroll, arguments)
+const scrollToElement = (el, time) => {
+  bscroll && bscroll.scrollToElement(el, time)
 }
 defineExpose({
   refresh,
@@ -117,6 +117,7 @@ defineExpose({
 onMounted(() => {
   bscroll = new BScroll(wrapper.value, {
     scrollX: props.scrollX,
+    scrollY: true,
     probeType: props.probeType,
     click: props.click,
     observeDOM: true,

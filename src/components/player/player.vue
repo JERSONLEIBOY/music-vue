@@ -97,7 +97,8 @@ const lyricList = ref(null)
 const middleL = ref(null)
 const audio = ref(null)
 const lyricLine = ref(null)
-
+const wrapper = ref(null)
+console.log(lyricList)
 const state = reactive({
   playlist: computed(() => {
     return storeGetters.playlist.value
