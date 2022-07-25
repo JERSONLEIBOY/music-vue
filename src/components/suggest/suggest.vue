@@ -42,7 +42,10 @@
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
 import NoResult from '@/base/no-result/no-result.vue'
+import { formatSongInfo } from '@/utils/song';
 import { reactive, getCurrentInstance, watch, nextTick } from 'vue';
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+const storeActions = useStoreActions('storeState', ['insertSong'])
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 import BScroll from '@better-scroll/core';
@@ -104,6 +107,7 @@ const handlePullingUp = () => {
   })
 }
 const selectItem = (item) => {
+  storeActions.insertSong(formatSongInfo(item))
   emit('select', item)
 }
 </script>
