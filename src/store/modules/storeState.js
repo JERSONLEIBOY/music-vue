@@ -1,6 +1,6 @@
 import getters from '../getters'
 import actions from '../actions'
-import { loadSearch } from '@/utils/cache'
+import { loadSearch, loadFavorite } from '@/utils/cache'
 import {playMode} from '@/utils/config'
 const storeState = {
   namespaced: true,
@@ -15,7 +15,8 @@ const storeState = {
     currentIndex: -1,
     disc: {},
     topList: {},
-    searchHistory: loadSearch()
+    searchHistory: loadSearch(),
+    favoriteList: loadFavorite()
   },
   getters,
   mutations: {
@@ -51,6 +52,9 @@ const storeState = {
     },
     SET_TOP_LIST: (state, topList) => {
       state.topList = topList
+    },
+    SET_FAVORITE_LIST: (state, favoriteList) => {
+      state.favoriteList = favoriteList
     }
   },
   actions

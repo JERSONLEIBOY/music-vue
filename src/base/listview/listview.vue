@@ -2,9 +2,10 @@
   <scroll
     class="listview"
     :probeType="1"
-    :data="dataList"
+    :data="props.dataList"
     :listenScroll="true"
     :pullup="pullingUp"
+    ref="listview"
   >
     <ul>
       <li
@@ -55,6 +56,8 @@
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
 const emit = defineEmits(['pullingUp', 'onShortcutTouchStart', 'selectItem'])
+import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
+const listview = ref(null)
 const props = defineProps({
   dataList: {
     type: Array,
@@ -86,6 +89,12 @@ const onShortcutTouchStart = (item, index) => {
 const selectItem = (item) => {
   emit('selectItem', item)
 }
+const refresh = () => {
+  listview.value.refresh()
+}
+defineExpose({
+  refresh
+})
 </script>
 
 <style lang="scss" scoped>

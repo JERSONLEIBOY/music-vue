@@ -5,6 +5,7 @@
   >
     <scroll
       class="recommend-content"
+      ref="scroll"
     >
       <div>
         <van-swipe
@@ -69,17 +70,33 @@
 </template>
 
 <script setup>
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+const storeGetters = useStoreGetters('storeState', ['playlist'])
+
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
-import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-
+const scroll = ref(null)
+const recommend = ref(null)
 const { proxy } = getCurrentInstance();
 const state = reactive({
   recommends: [],
-  disclist: []
+  disclist: [],
+  playlist: computed(() => {
+    return storeGetters.playlist.value
+  })
 });
+const handlePlaylist = (playlist) => {
+  const bottom = playlist.length > 0 ? '60px' : ''
+  recommend.value.style.bottom = bottom
+  scroll.value.refresh()
+}
+watch(() => state.playlist, (newVal) => {
+  console.log(newVal)
+  handlePlaylist(newVal);
+})
 const _getRecommend = async () => {
   const { data: res } = await proxy.$http.banner();
   if (res.code == 200) {

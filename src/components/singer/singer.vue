@@ -4,6 +4,7 @@
     ref="singer"
   >
     <list-view
+      ref="list"
       :dataList="state.singerList"
       :shortcut="state.shortcut"
       :dataStatus="state.dataStatus"
@@ -21,10 +22,15 @@
 </template>
 
 <script setup>
-import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
 import ListView from "@/base/listview/listview.vue";
 import { useRouter } from 'vue-router';
 import { Toast } from 'vant';
+const storeGetters = useStoreGetters('storeState', ['playlist'])
+
+const list = ref(null);
+const singer = ref(null);
 const { proxy } = getCurrentInstance();
 const router = useRouter();
 const state = reactive({
@@ -36,6 +42,9 @@ const state = reactive({
     limit: 10,
     offset: 0
   },
+  playlist: computed(() => {
+    return storeGetters.playlist.value
+  }),
   currentIndex: 0,
   shortcut: [{
     title: '热'
@@ -96,6 +105,16 @@ const state = reactive({
   }],
   dataStatus: 'HAS_MORE_DATA',
   more: false
+})
+const handlePlaylist = (playlist) => {
+  const bottom = playlist.length > 0 ? '60px' : ''
+  singer.value.style.bottom = bottom
+  console.log(list)
+  list.value.refresh()
+}
+watch(() => state.playlist, (newVal) => {
+  console.log(newVal)
+  handlePlaylist(newVal);
 })
 const topArtists = async (params) => {
   if (state.dataStatus == 'LOADING') return;

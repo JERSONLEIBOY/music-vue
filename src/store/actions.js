@@ -1,4 +1,4 @@
-import { saveSearch, clearSearch, deleteSearch } from '@/utils/cache'
+import { saveSearch, clearSearch, deleteSearch, saveFavorite, deleteFavorite } from '@/utils/cache'
 import {playMode} from '@/utils/config'
 import {shuffle} from '@/utils/index'
 function findIndex(list, song) {
@@ -45,6 +45,24 @@ const actions = {
     commit('SET_FULL_SCREEN', true)
     commit('SET_PLAYING_STATE', true)
     return
+  },
+  saveFavoriteList: ({ commit }, song) => {
+    return commit('SET_FAVORITE_LIST', saveFavorite(song))
+  },
+  deleteFavoriteList: ({ commit }, song) => {
+    return commit('SET_FAVORITE_LIST', deleteFavorite(song))
+  },
+  setPlayingState: ({ commit }, playing) => {
+    return commit('SET_PLAYING_STATE', playing)
+  },
+  setPlayMode: ({ commit }, mode) => {
+    return commit('SET_PLAY_MODE', mode)
+  },
+  setPlaylist: ({ commit }, playlist) => {
+    return commit('SET_PLAYLIST', playlist)
+  },
+  setCurrentIndex: ({ commit }, currentIndex) => {
+    return commit('SET_CURRENT_INDEX', currentIndex)
   }
 }
 export default actions

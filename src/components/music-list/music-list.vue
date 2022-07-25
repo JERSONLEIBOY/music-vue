@@ -110,8 +110,14 @@ const state = reactive({
     return storeGetters.playlist.value
   })
 })
+const handlePlaylist = (playlist) => {
+  const bottom = playlist.length > 0 ? '60px' : ''
+  list.value.$el.style.bottom = bottom
+  list.value.refresh()
+}
 watch(() => state.playlist, (newVal) => {
   console.log(newVal)
+  handlePlaylist(newVal);
 })
 watch(() => state.scrollY, (newY) => {
   let translateY = Math.max(state.minTranslateY, newY);
@@ -143,7 +149,11 @@ watch(() => state.scrollY, (newY) => {
   bgImage.value.style[transform] = `scale(${scale})`;
   bgImage.value.style.zIndex = zIndex;
 })
-const random = () => { }
+const random = () => {
+  storeActions.randomPlay({
+    list: props.songs
+  })
+}
 const back = () => {
   router.back();
 }

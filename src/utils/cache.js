@@ -2,6 +2,10 @@ import storage from 'good-storage'
 const SEARCH_KEY = '__search__'
 const SEARCH_MAX_LEN = 15
 
+const FAVORITE_KEY = '__favorite__'
+const FAVORITE_MAX_LEN = 200
+
+
 const insertArray = (arr, val, compare, maxLen) => {
   const index = arr.findIndex(compare)
   if (index == 0) {
@@ -50,11 +54,37 @@ const loadSearch = () => {
   return storage.get(SEARCH_KEY, [])
 }
 
+const loadFavorite = () => {
+  return storage.get(FAVORITE_KEY, [])
+}
+
+const saveFavorite = (song) => {
+  let songs = storage.get(FAVORITE_KEY, [])
+  insertArray(songs, song, (item) => {
+    return song.id === item.id
+  }, FAVORITE_MAX_LEN)
+  storage.set(FAVORITE_KEY, songs)
+  return songs
+}
+
+const deleteFavorite = (song) => {
+  let songs = storage.get(FAVORITE_KEY, [])
+  deleteFromArray(songs, (item) => {
+    return item.id === song.id
+  })
+  storage.set(FAVORITE_KEY, songs)
+  return songs
+}
+
+
 export {
   insertArray,
   deleteFromArray,
   saveSearch,
   deleteSearch,
   clearSearch,
-  loadSearch
+  loadSearch,
+  loadFavorite,
+  saveFavorite,
+  deleteFavorite
 }
