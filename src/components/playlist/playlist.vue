@@ -19,7 +19,7 @@
               <span class="like" @click.stop="toggleFavorite(item)">
                 <i :class="getFavoriteIcon(item)"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -49,7 +49,7 @@ import { playMode } from '@/utils/config'
 
 import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
 const storeGetters = useStoreGetters('storeState', ['playlist', 'currentIndex', 'fullScreen', 'playing', 'currentSong', 'mode', 'favoriteList', 'sequenceList'])
-const storeActions = useStoreActions('storeState', ['setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex', 'saveFavoriteList', 'deleteFavoriteList', 'setPlayingState'])
+const storeActions = useStoreActions('storeState', ['deleteSongList', 'deleteSong', 'setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex', 'saveFavoriteList', 'deleteFavoriteList', 'setPlayingState'])
 
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch, nextTick } from 'vue';
 
@@ -101,7 +101,15 @@ const showConfirm = () => {
 }
 
 const confirmClear = () => {
+  storeActions.deleteSongList()
   hide()
+}
+
+const deleteOne = (item) => {
+  storeActions.deleteSong(item)
+  if (!state.playlist.length) {
+    hide()
+  }
 }
 
 const getCurrentIcon = (item) => {
