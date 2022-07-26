@@ -70,6 +70,8 @@ import Scroll from '@/base/scroll/scroll.vue'
 import SongList from "@/base/song-list/song-list.vue"
 import Loading from "@/base/loading/loading.vue"
 import { useRouter } from 'vue-router';
+import { Toast } from 'vant';
+
 const storeActions = useStoreActions('storeState', ['selectPlay', 'randomPlay'])
 const storeGetters = useStoreGetters('storeState', ['playlist'])
 const transform = prefixStyle("transform");
@@ -158,6 +160,10 @@ const back = () => {
   router.back();
 }
 const selectItem = (item, index) => {
+  if (item.vip) {
+    Toast('开通VIP可免费播放');
+    return
+  }
   storeActions.selectPlay({
     list: props.songs,
     index
@@ -171,6 +177,7 @@ onMounted(() => {
   state.imageHeight = bgImage.value.clientHeight;
   state.minTranslateY = -state.imageHeight + RESERVED_HEIGHT;
   list.value.$el.style.top = `${state.imageHeight}px`
+  handlePlaylist(state.playlist)
 })
 </script>
 

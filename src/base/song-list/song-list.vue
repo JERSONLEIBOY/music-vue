@@ -20,6 +20,9 @@
           <h2 class="name">{{item.name}}</h2>
           <p class="desc">{{getDesc(item)}}</p>
         </div>
+        <div class="type" v-show="item.vip">
+          <van-icon name="diamond-o" />
+        </div>
       </li>
     </ul>
   </div>
@@ -106,6 +109,12 @@ const selectItem = (item, index) => {
         white-space: nowrap;
         margin-top: 4px;
         color: rgba(255,255,255,0.3);
+      }
+    }
+    .type {
+      .van-icon-diamond-o {
+        font-size: 16px;
+        color: rgba(255, 205, 49, 0.5);
       }
     }
   }

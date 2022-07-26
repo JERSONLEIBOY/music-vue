@@ -38,17 +38,36 @@
 </template>
 
 <script setup>
-import { reactive, getCurrentInstance, onMounted } from 'vue';
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+const storeGetters = useStoreGetters('storeState', ['playlist'])
+
+import { reactive, getCurrentInstance, onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance();
 import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
 import { Toast } from 'vant';
 const router = useRouter();
+
+const rank = ref(null)
+const toplist = ref(null)
+
 const state = reactive({
-  topList: []
+  topList: [],
+  playlist: computed(() => {
+    return storeGetters.playlist.value
+  })
 })
-const toplist = async () => {
+const handlePlaylist = (playlist) => {
+  const bottom = playlist.length > 0 ? '60px' : ''
+  rank.value.style.bottom = bottom
+  toplist.value.refresh()
+}
+watch(() => state.playlist, (newVal) => {
+  console.log(newVal)
+  handlePlaylist(newVal);
+})
+const _getTopList = async () => {
   const { data: res } = await proxy.$http.topListDetail();
   if (res.code !== 200) {
     return Toast.fail('数据请求失败')
@@ -61,7 +80,8 @@ const selectItem = (item) => {
   })
 }
 onMounted(() => {
-  toplist();
+  _getTopList();
+  handlePlaylist(state.playlist)
 })
 </script>
 

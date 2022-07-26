@@ -129,6 +129,7 @@
               <i
                 class="icon"
                 :class="getFavoriteIcon(state.currentSong)"
+                @click="toggleFavorite(state.currentSong)"
               ></i>
             </div>
           </div>
@@ -197,7 +198,7 @@ import Lyric from 'lyric-parser'
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch, nextTick } from 'vue';
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
-const storeActions = useStoreActions('storeState', ['setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex'])
+const storeActions = useStoreActions('storeState', ['setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex', 'saveFavoriteList', 'deleteFavoriteList'])
 const storeGetters = useStoreGetters('storeState', ['playlist', 'currentIndex', 'fullScreen', 'playing', 'currentSong', 'mode', 'favoriteList', 'sequenceList'])
 const cdWrapper = ref(null)
 const lyricList = ref(null)
@@ -437,6 +438,13 @@ const _pad = (num, n = 2) => {
   }
   return num
 }
+const toggleFavorite = (song) => {
+  if (isFavorite(song)) {
+    storeActions.deleteFavoriteList(song)
+  } else {
+    storeActions.saveFavoriteList(song)
+  }
+}
 const getFavoriteIcon = (song) => {
   if (isFavorite(song)) {
     return 'icon-favorite'
@@ -549,8 +557,13 @@ watch(() => state.currentSong, (newSong, oldSong) => {
   let timer = null;
   clearTimeout(timer)
   timer = setTimeout(() => {
-    audio.value.play()
-    getLyric(newSong.id)
+    if (newSong.vip) {
+      Toast('开通VIP可免费播放');
+      next();
+    } else {
+      audio.value.play()
+      getLyric(newSong.id)
+    }
   }, 1000)
 })
 </script>

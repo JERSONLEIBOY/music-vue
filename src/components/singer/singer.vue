@@ -162,6 +162,7 @@ onMounted(() => {
   topArtists(state.params).catch((error) => {
     console.log(error)
   })
+  handlePlaylist(state.playlist)
 })
 </script>
 

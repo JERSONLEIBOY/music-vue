@@ -3,8 +3,8 @@
     <div class="search-box-wrapper">
       <search-box ref="searchbox" :query="state.query" @input="onQueryChange" @clear="handleClickClear"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!state.query">
-      <scroll class="shortcut" :data="state.shortcut">
+    <div class="shortcut-wrapper" v-show="!state.query" ref="shortcutWrapper">
+      <scroll class="shortcut" :data="state.shortcut" ref="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -40,19 +40,40 @@ import SearchBox from '@/base/search-box/search-box.vue'
 import SearchList from '@/base/search-list/search-list.vue'
 import Suggest from '@/components/suggest/suggest.vue'
 import Confirm from '@/base/confirm/confirm.vue'
-import { reactive, getCurrentInstance, onMounted, computed, ref } from 'vue';
+import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 const storeActions = useStoreActions('storeState', ['saveSearchHistory', 'deleteSearchHistory', 'clearSearchHistory'])
 const storeState = useStoreState('storeState', ['searchHistory'])
+const storeGetters = useStoreGetters('storeState', ['playlist'])
 const confirm = ref(null)
+const searchResult = ref(null)
+const suggest = ref(null)
+const shortcutWrapper = ref(null)
+const shortcut = ref(null)
+
 const state = reactive({
   query: '',
   hotKey: [],
   searchHistory: storeState.searchHistory,
   shortcut: computed(() => {
     return state.hotKey.concat(state.searchHistory)
+  }),
+  playlist: computed(() => {
+    return storeGetters.playlist.value
   })
+})
+const handlePlaylist = (playlist) => {
+  const bottom = playlist.length > 0 ? '60px' : ''
+  searchResult.value.style.bottom = bottom
+  suggest.value.refresh()
+
+  shortcutWrapper.value.style.bottom = bottom
+  shortcut.value.refresh()
+}
+watch(() => state.playlist, (newVal) => {
+  console.log(newVal)
+  handlePlaylist(newVal);
 })
 const onQueryChange = (query) => {
   state.query = query.searchValue
@@ -84,6 +105,7 @@ const clearSearchHistory = () => {
 }
 onMounted(() => {
   _getHotKey()
+  handlePlaylist(state.playlist);
 })
 </script>
 

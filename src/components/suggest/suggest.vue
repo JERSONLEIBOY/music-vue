@@ -43,12 +43,14 @@ import Scroll from '@/base/scroll/scroll.vue'
 import Loading from "@/base/loading/loading.vue"
 import NoResult from '@/base/no-result/no-result.vue'
 import { formatSongInfo } from '@/utils/song';
-import { reactive, getCurrentInstance, watch, nextTick } from 'vue';
+import { reactive, getCurrentInstance, watch, ref } from 'vue';
 import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
 const storeActions = useStoreActions('storeState', ['insertSong'])
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
 import BScroll from '@better-scroll/core';
+const suggest = ref(null)
+
 const limit = 30
 const emit = defineEmits(['select'])
 const props = defineProps({
@@ -110,6 +112,12 @@ const selectItem = (item) => {
   storeActions.insertSong(formatSongInfo(item))
   emit('select', item)
 }
+const refresh = () => {
+  suggest.value.refresh()
+}
+defineExpose({
+  refresh
+})
 </script>
 
 <style lang="scss" scoped>

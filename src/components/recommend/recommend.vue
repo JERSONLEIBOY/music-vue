@@ -118,6 +118,7 @@ const selectItem = (id) => {
 onMounted(() => {
   _getRecommend()
   getMusicList()
+  handlePlaylist(state.playlist)
 })
 </script>
 
