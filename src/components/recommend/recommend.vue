@@ -13,6 +13,7 @@
           :autoplay="3000"
           :height="150"
           indicator-color="white"
+          :stop-propagation="false"
         >
           <van-swipe-item
             v-for="(item, index) in state.recommends"
@@ -33,7 +34,7 @@
               class="item"
               v-for="(item, index) in state.disclist"
               :key="index"
-              @click="selectItem(item)"
+              @click="selectItem(item.id)"
             >
               <div class="icon">
                 <img
@@ -109,9 +110,9 @@ const getMusicList = async () => {
     state.disclist = res.playlists;
   }
 }
-const selectItem = (item) => {
+const selectItem = (id) => {
   router.push({
-    path: `/recommend/${item.id}`,
+    path: `/recommend/${id}`,
   })
 }
 onMounted(() => {

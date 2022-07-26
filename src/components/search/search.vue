@@ -9,7 +9,7 @@
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
             <ul>
-              <li class="item" v-for="(item, index) in state.hotKey" :key="index" @click="addQuery(item)">
+              <li class="item" v-for="(item, index) in state.hotKey" :key="index" @click="addQuery(item.first)">
                 <span>{{item.first}}</span>
               </li>
             </ul>
@@ -61,7 +61,7 @@ const handleClickClear = (query) => {
   state.query = ''
 }
 const addQuery = (item) => {
-  state.query = item.first;
+  state.query = item;
 }
 const _getHotKey = async () => {
   const { data: res } = await proxy.$http.serachHot();
