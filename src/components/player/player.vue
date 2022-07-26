@@ -170,11 +170,12 @@
             ></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <playlist ref="listPlay"></playlist>
     <audio
       ref="audio"
       :src="state.currentSong.url"
@@ -192,6 +193,7 @@ import animations from 'create-keyframe-animation'
 import Scroll from '@/base/scroll/scroll.vue'
 import ProgressCircle from '@/base/progress-circle/progress-circle'
 import ProgressBar from '@/base/progress-bar/progress-bar'
+import Playlist from '@/components/playlist/playlist'
 import { prefixStyle } from '@/utils/dom'
 import { playMode } from '@/utils/config'
 import Lyric from 'lyric-parser'
@@ -206,6 +208,8 @@ const middleL = ref(null)
 const audio = ref(null)
 const lyricLine = ref(null)
 const wrapper = ref(null)
+const listPlay = ref(null)
+
 console.log(audio)
 const state = reactive({
   playlist: computed(() => {
@@ -255,6 +259,9 @@ const percent = computed(() => {
     return state.currentTime / proxy.$utils.formatSongSecond(state.currentSong.duration)
   }
 })
+const showPlaylist = () => {
+  listPlay.value.show()
+}
 const changeMode = () => {
   const mode = (state.mode + 1) % 3
   storeActions.setPlayMode(mode)

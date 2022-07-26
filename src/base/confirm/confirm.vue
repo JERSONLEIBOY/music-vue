@@ -3,6 +3,7 @@
     <div
       class="confirm"
       v-show="state.showFlag"
+      @click.stop
     >
       <div class="confirm-wrapper">
         <div class="confirm-content">
