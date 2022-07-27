@@ -52,8 +52,6 @@ const state = reactive({
 <style lang="scss" scoped>
 .progress-circle {
   position: relative;
-  width: 32px;
-  height: 32px;
   circle {
     stroke-width: 8px;
     transform-origin: center;

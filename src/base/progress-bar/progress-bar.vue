@@ -1,6 +1,7 @@
 <template>
   <div
     class="progress-bar"
+    id="progressBar"
     ref="progressBar"
     @click="progressClick"
   >
@@ -44,8 +45,9 @@ const props = defineProps({
 const state = reactive({
   touch: {}
 })
-
 watch(() => props.percent, (newPercent) => {
+  console.log(props.percent)
+  console.log(progressBar.value.getBoundingClientRect())
   if (newPercent >= 0 && !state.touch.initiated) {
     const barWidth = progressBar.value.clientWidth - progressBtnWidth
     const offsetWidth = newPercent * barWidth

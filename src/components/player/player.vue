@@ -19,7 +19,7 @@
           <img
             width="100%"
             height="100%"
-            :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl"
+            :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl + `?param=300y300`"
             alt=""
           >
         </div>
@@ -56,7 +56,7 @@
               >
                 <img
                   class="image"
-                  :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl"
+                  :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl + `?param=300y300`"
                   alt=""
                 >
               </div>
@@ -147,7 +147,7 @@
             :class="cdCls"
             width="40"
             height="40"
-            :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl"
+            :src="state.currentSong && state.currentSong.album && state.currentSong.album.picUrl + `?param=300y300`"
             alt=""
           >
         </div>
@@ -233,7 +233,7 @@ const state = reactive({
   touch: {},
   songReady: false,
   currentTime: 0,
-  radius: '100%',
+  radius: 32,
   currentLyric: null,
   currentLineNum: 0,
   currentShow: 'cd',
@@ -880,8 +880,9 @@ watch(() => state.currentSong, (newSong, oldSong) => {
       .icon-mini {
         font-size: 32px;
         position: absolute;
-        left: .5px;
-        top: 1px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
     }
   }
