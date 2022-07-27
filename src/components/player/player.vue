@@ -233,7 +233,7 @@ const state = reactive({
   touch: {},
   songReady: false,
   currentTime: 0,
-  radius: 32,
+  radius: '100%',
   currentLyric: null,
   currentLineNum: 0,
   currentShow: 'cd',
@@ -880,8 +880,8 @@ watch(() => state.currentSong, (newSong, oldSong) => {
       .icon-mini {
         font-size: 32px;
         position: absolute;
-        left: 0;
-        top: 0;
+        left: .5px;
+        top: 1px;
       }
     }
   }

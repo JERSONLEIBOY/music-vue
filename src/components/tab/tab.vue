@@ -3,6 +3,7 @@
     <router-link
       to="/recommend"
       v-slot="{ href,route,isActive,navigate,isExactActive}"
+      replace
       class="tab-item"
     >
       <span class="tab-link">推荐</span>
@@ -10,6 +11,7 @@
     <router-link
       to="/singer"
       v-slot="{ href,route,isActive,navigate,isExactActive}"
+      replace
       class="tab-item"
     >
       <span class="tab-link">歌手</span>
@@ -17,6 +19,7 @@
     <router-link
       to="/rank"
       v-slot="{ href,route,isActive,navigate,isExactActive}"
+      replace
       class="tab-item"
     >
       <span class="tab-link">排行</span>
@@ -24,6 +27,7 @@
     <router-link
       to="/search"
       v-slot="{ href,route,isActive,navigate,isExactActive}"
+      replace
       class="tab-item"
     >
       <span class="tab-link">搜索</span>
