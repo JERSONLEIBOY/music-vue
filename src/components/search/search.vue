@@ -71,6 +71,13 @@ const handlePlaylist = (playlist) => {
   shortcutWrapper.value.style.bottom = bottom
   shortcut.value.refresh()
 }
+watch(() => state.query, (newQuery) => {
+  if (!newQuery) {
+    setTimeout(() => {
+      shortcut.value.refresh()
+    }, 20)
+  }
+})
 watch(() => state.playlist, (newVal) => {
   console.log(newVal)
   handlePlaylist(newVal);
