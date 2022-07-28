@@ -24,7 +24,10 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { useStoreState, useStoreActions, useStoreGetters } from '@/utils/storeState'
+const storeGetters = useStoreGetters('storeState', ['playlist', 'currentIndex', 'fullScreen', 'playing', 'currentSong', 'mode', 'favoriteList', 'sequenceList'])
+
+import { reactive, ref, watch, computed, nextTick } from 'vue';
 import { prefixStyle } from '@/utils/dom'
 
 const emit = defineEmits(['percentChange'])
@@ -43,15 +46,27 @@ const props = defineProps({
   }
 })
 const state = reactive({
-  touch: {}
+  touch: {},
+  fullScreen: computed(() => {
+    return storeGetters.fullScreen.value
+  })
+})
+watch(() => state.fullScreen, (fullScreen) => {
+  if (fullScreen) {
+    nextTick(() => {
+      const barWidth = progressBar.value.clientWidth - progressBtnWidth
+      const offsetWidth = props.percent * barWidth
+      _offset(offsetWidth)
+    })
+  }
 })
 watch(() => props.percent, (newPercent) => {
-  console.log(props.percent)
-  console.log(progressBar.value.getBoundingClientRect())
   if (newPercent >= 0 && !state.touch.initiated) {
-    const barWidth = progressBar.value.clientWidth - progressBtnWidth
-    const offsetWidth = newPercent * barWidth
-    _offset(offsetWidth)
+    nextTick(() => {
+      const barWidth = progressBar.value.clientWidth - progressBtnWidth
+      const offsetWidth = newPercent * barWidth
+      _offset(offsetWidth)
+    })
   }
 })
 

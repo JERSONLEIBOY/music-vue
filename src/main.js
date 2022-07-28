@@ -14,4 +14,5 @@ app.config.globalProperties['$utils'] = util;
 app.use(router)
 app.use(store)
 app.use(Lazyload)
+app.config.devtools = true
 app.mount("#app")

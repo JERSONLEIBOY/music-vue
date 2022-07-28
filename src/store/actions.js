@@ -1,4 +1,4 @@
-import { saveSearch, clearSearch, deleteSearch, saveFavorite, deleteFavorite } from '@/utils/cache'
+import { saveSearch, clearSearch, deleteSearch, saveFavorite, deleteFavorite, savePlay } from '@/utils/cache'
 import {playMode} from '@/utils/config'
 import {shuffle} from '@/utils/index'
 function findIndex(list, song) {
@@ -133,6 +133,9 @@ const actions = {
     commit('SET_SEQUENCE_LIST', [])
     commit('SET_PLAYING_STATE', false)
     return
+  },
+  savePlayHistory: ({ commit }, song) => {
+    return commit('SET_PLAY_HISTORY', savePlay(song))
   }
 }
 export default actions

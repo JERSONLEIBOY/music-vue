@@ -26,7 +26,7 @@
           </transition-group>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="handleAddSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -36,6 +36,7 @@
         </div>
       </div>
       <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
@@ -43,7 +44,7 @@
 <script setup>
 import Scroll from '@/base/scroll/scroll.vue'
 import Confirm from '@/base/confirm/confirm.vue'
-
+import AddSong from '@/components/add-song/add-song.vue'
 import { playMode } from '@/utils/config'
 
 
@@ -57,6 +58,7 @@ const { proxy } = getCurrentInstance();
 const listContent = ref(null)
 const list = ref(null)
 const confirm = ref(null)
+const addSong = ref(null)
 
 const state = reactive({
   showFlag: false,
@@ -91,6 +93,10 @@ const show = () => {
 defineExpose({
   show
 })
+
+const handleAddSong = () => {
+  addSong.value.show()
+}
 
 const hide = () => {
   state.showFlag = false
