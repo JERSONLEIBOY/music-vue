@@ -200,7 +200,7 @@ import Lyric from 'lyric-parser'
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch, nextTick } from 'vue';
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
-const storeActions = useStoreActions('storeState', ['setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex', 'saveFavoriteList', 'deleteFavoriteList'])
+const storeActions = useStoreActions('storeState', ['setFullScreen', 'setPlayingState', 'setPlayMode', 'setPlaylist', 'setCurrentIndex', 'saveFavoriteList', 'deleteFavoriteList', 'savePlayHistory'])
 const storeGetters = useStoreGetters('storeState', ['playlist', 'currentIndex', 'fullScreen', 'playing', 'currentSong', 'mode', 'favoriteList', 'sequenceList'])
 const cdWrapper = ref(null)
 const lyricList = ref(null)
@@ -483,6 +483,7 @@ const prev = () => {
 }
 const ready = () => {
   state.songReady = true;
+  storeActions.savePlayHistory(state.currentSong)
 }
 const error = () => {
   state.songReady = true;

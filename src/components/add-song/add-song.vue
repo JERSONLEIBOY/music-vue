@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="search-box-wrapper">
-        <search-box ref="searchBox" @query="onQueryChange" placeholder="搜索歌曲"></search-box>
+        <search-box ref="searchBox" :query="state.query" @clear="handleClickClear" @input="onQueryChange" placeholder="搜索歌曲"></search-box>
       </div>
       <div class="shortcut" v-show="!state.query">
         <switches :switches="state.switches" :currentIndex="state.currentIndex" @switch="switchItem"></switches>
@@ -47,6 +47,7 @@ import Suggest from '@/components/suggest/suggest.vue'
 import Switches from '@/base/switches/switches'
 import TopTip from '@/base/top-tip/top-tip'
 
+import { formatSongInfo } from '@/utils/song';
 import { reactive, getCurrentInstance, onMounted, computed, ref, watch } from 'vue';
 const { proxy } = getCurrentInstance();
 import { Toast } from 'vant';
@@ -60,6 +61,7 @@ const storeGetters = useStoreGetters('storeState', ['playlist', 'playHistory'])
 const songList = ref(null)
 const searchList = ref(null)
 const topTips = ref(null)
+const shortcut = ref(null)
 
 const state = reactive({
   query: '',
@@ -80,6 +82,18 @@ const state = reactive({
     return storeGetters.playHistory.value
   })
 })
+
+// watch(() => state.query, (newQuery) => {
+//   if (!newQuery) {
+//     setTimeout(() => {
+//       shortcut.value.refresh()
+//     }, 20)
+//   }
+// })
+
+const handleClickClear = (query) => {
+  state.query = ''
+}
 
 const addQuery = (item) => {
   state.query = item;
@@ -106,7 +120,7 @@ const hide = () => {
 
 const selectSong = (song, index) => {
   if (index !== 0) {
-    // storeActions.insertSong()
+    storeActions.insertSong(song)
     topTips.value.show()
   }
 }

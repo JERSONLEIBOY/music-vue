@@ -44,8 +44,11 @@ defineExpose({
   &.drop-enter-active, &.drop-leave-active {
     transition: all 0.3s;
   }
-  &.drop-enter, &.drop-leave-to {
+  &.drop-enter-from, &.drop-leave-to {
     transform: translate3d(0, -100%, 0);
+  }
+  &.drop-leave-from, &.drop-enter-to {
+    transform: translate3d(0, 0, 0);
   }
 }
 </style>
