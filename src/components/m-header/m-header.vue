@@ -2,6 +2,9 @@
   <div class="m-header">
     <div class="icon"></div>
     <div class="text">vue-music</div>
+    <router-link to="/user" class="mine">
+      <i class="icon-mine"></i>
+    </router-link>
   </div>
 </template>
 
@@ -31,6 +34,17 @@
     vertical-align: top;
     line-height: 44px;
     font-size: 18px;
+  }
+  .mine {
+    position: absolute;
+    top: 0;
+    right: 0;
+    .icon-mine {
+      display: block;
+      padding: 12px;
+      font-size: 20px;
+      color: #ffcd32;
+    }
   }
 }
 </style>
