@@ -70,24 +70,24 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
-  if (to.path === '/login') {
-    if (token) {
-      next({
-        path: from.path
-      })
-    } else {
-      next()
-    }
-  } else {
-    if (token === null || token === '') {
-      next('/login')
-    } else {
-      next()
-    }
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   const token = localStorage.getItem('token');
+//   if (to.path === '/login') {
+//     if (token) {
+//       next({
+//         path: from.path
+//       })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     if (token === null || token === '') {
+//       next('/login')
+//     } else {
+//       next()
+//     }
+//   }
+// })
 
 
 
