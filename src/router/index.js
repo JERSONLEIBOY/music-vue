@@ -8,6 +8,7 @@ import Disc from '../components/disc/disc.vue';
 import TopList from '../components/top-list/top-list.vue';
 import UserCenter from '../components/user-center/user-center.vue';
 import HelloWord from '../components/HelloWorld.vue';
+import Login from '../views/Login.vue';
 const routes = [
   {
     path: '/',
@@ -58,11 +59,36 @@ const routes = [
   {
     path: '/user',
     component: UserCenter
+  },
+  {
+    path: '/login',
+    component: Login
   }
 ]
 const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  if (to.path === '/login') {
+    if (token) {
+      next({
+        path: from.path
+      })
+    } else {
+      next()
+    }
+  } else {
+    if (token === null || token === '') {
+      next('/login')
+    } else {
+      next()
+    }
+  }
+})
+
+
 
 export default router

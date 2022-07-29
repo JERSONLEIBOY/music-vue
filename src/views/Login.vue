@@ -37,8 +37,10 @@
 
 <script setup>
 import { reactive, getCurrentInstance } from 'vue';
+import {useRouter} from 'vue-router'//导入vue-router
 import { Toast } from 'vant';
 const { proxy } = getCurrentInstance();
+const router = useRouter();//使用router
 console.log(proxy)
 const state = reactive({
   phone: '',
@@ -62,6 +64,18 @@ const submitForm = async () => {
   if (isSubmit()) return;
   const { data: res } = await proxy.$http.login(state.phone, state.captcha);
   console.log(res)
+  if (res.code !== 200) {
+    Toast(res.msg);
+  } else {
+    localStorage.setItem('token', res.token)
+    let queryRedirectPath = '/recommend'
+    if (router.currentRoute.value.query.redirect) {
+      queryRedirectPath = router.currentRoute.value.query.redirect
+    }
+    router.replace({
+      path: queryRedirectPath
+    })
+  }
 }
 /*-----------------------------------验证码----------------------------*/
 /**
@@ -152,7 +166,8 @@ judgeCode()
 <style lang="scss" scoped>
 .container {
   padding-top: 115px;
-  position: relative;
+  position: fixed;
+  top: 0;
   width: 100vw;
   height: 100vh;
   overflow: hidden;

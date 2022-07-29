@@ -52,7 +52,6 @@ const instance = Axios.create({
   timeout: 2000,
   headers: {
     'Content-Type': 'application/json',
-    'token': '',
     'X-Requested-With': 'XMLHttpRequest'
   }
 })
@@ -67,6 +66,9 @@ instance.interceptors.request.use((config) => {
   })
   // 阻止重复请求
   stopRepeatRequest(requestList, config.url, cancelFn, `不要连续请求：${config.url}，速度太快了`)
+  if (localStorage.getItem('token')) {
+    config.headers.common['Authorization'] = localStorage.getItem('token')
+  }
   return config
 }, (error) => {
   return Promise.reject(error)
