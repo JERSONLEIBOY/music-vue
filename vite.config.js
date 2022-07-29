@@ -11,7 +11,6 @@ function pathResolve(dir) {
 }
 export default defineConfig(({command, mode}) => {
   const env = loadEnv(mode, process.cwd(), '')
-  console.log(env.VITE_BASE_URL)
   return {
     plugins: [
       vue(),
@@ -54,6 +53,13 @@ export default defineConfig(({command, mode}) => {
     },
     build: {
       assetsDir: 'static',
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
       rollupOptions: {
         input: {
           index:resolve(__dirname,"index.html"),
