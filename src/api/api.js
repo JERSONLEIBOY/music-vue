@@ -16,10 +16,11 @@ const banner = () => {
   return api.get(`/banner?type=2`, {})
 }
 // 登录接口
-const login = (phone = '', captcha = '') => {
+const login = (phone = '', captcha = '', realIP = '43.241.243.255') => {
   return api.post(`/login/cellphone`, {
     phone,
     captcha: captcha,
+    realIP
   })
 }
 // 发送验证码
