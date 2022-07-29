@@ -3,7 +3,7 @@ let baseURL = '';
 if (import.meta.env.MODE  === 'development') {
   baseURL = '/api'
 } else if (import.meta.env.MODE === 'production') {
-  baseURL = '/api'
+  baseURL = import.meta.env.VITE_BASE_URL
 }
 console.log(baseURL)
 /*  防止请求重复
